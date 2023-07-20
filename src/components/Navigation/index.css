@@ -1,0 +1,66 @@
+
+/* lgoo */
+.logo {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-image: url(../../assets//imgs/logo.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    left: 220px;
+    top: 10px;
+}
+
+/* 导航栏 */
+.Navi {
+    padding: 10px 80px;
+    margin: 0 123px;
+    background-color: transparent;
+}
+/* .Navi li {
+    padding-right: 80px;
+} */
+/* 搜索框 */
+.MyInput {
+    position: absolute;
+    right: 440px;
+    top: 18px;
+    width: 300px;
+    height: 30px;
+    border-radius: 14px;
+    /* border-color: #ccc; */
+    font-size: 14px;
+    color: #a7a5a5;
+    border: 0px;
+    outline: none;
+    padding-left: 14px;
+}
+
+.search {
+    position: absolute;
+    right: 450px;
+    top: 23px;
+    font-size: 20px;
+    color: grey;
+}
+
+/* 开播 */
+.startLive {
+    position: absolute;
+    right: 315px;
+    top: 19px;
+    font-size: 30px;
+    opacity: 0.65;
+}
+.start {
+    font-size: 14px;
+    position: absolute;
+    right: 280px;
+    top: 25px;
+}
+/* 个人中心 */
+.User {
+    position: absolute;
+    right: 200px;
+    top: 15px;
+}

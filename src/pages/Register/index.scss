@@ -1,0 +1,87 @@
+.register {
+    height: 100vh;
+    background-color: rgba(190, 204, 255, 0.327);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    .card {
+      width: 50%;
+      display: flex;
+      flex-direction: row-reverse;
+      background-color: white;
+      border-radius: 10px;
+      max-height: 600px;
+      overflow: hidden;
+  
+      .left {
+        flex: 1;
+        background: linear-gradient(rgba(39, 11, 96, 0.273), rgba(39, 11, 96, 0.067)),
+          url("https://images.unsplash.com/photo-1680969194467-648f8af9a618?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=60")
+            center;
+        background-size: cover;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        color: white;
+  
+        h1 {
+            font-size: 80px;
+            line-height: 50px;
+        }
+        
+  
+        span {
+          font-size: 14px;
+        }
+        
+        button {
+          width: 50%;
+          padding: 10px;
+          border: none;
+          background-color: white;
+          color: rgb(98, 161, 186);
+          font-weight: bold;
+          cursor: pointer;
+          border-radius: 4px;
+        }
+      }
+  
+      .right {
+        flex: 1;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+        justify-content: center;
+  
+        h1 {
+        color: #555;
+        }
+        
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+          
+          input {
+          border: none;
+          border-bottom: 1px solid lightgray;
+          padding: 10px 10px;
+          }
+          
+          button {
+            width: 50%;
+            padding: 10px;
+            border: none;
+            background-color: #938eef;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+          }
+        }
+      }
+    }
+  }
