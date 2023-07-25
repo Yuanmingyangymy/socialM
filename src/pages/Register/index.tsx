@@ -1,8 +1,25 @@
 import React from 'react';
+import axios from 'axios';
 import { Outlet, Link } from "react-router-dom";
 import './index.scss';
 
 const Register: React.FC = () => {
+    interface userData {
+        username: string;
+        password: string;
+        email?: string;
+    }
+
+    
+
+    function handleReg() {
+        axios.post("http://127.0.0.1:3007/api/register").then(res => {
+            console.log(res);
+            
+        })
+    }
+
+
     return (
         <div className="register">
             <div className="card">
@@ -20,10 +37,9 @@ const Register: React.FC = () => {
                     <h1>Register</h1>
                     <form>
                         <input type="text" placeholder="Username" />
-                        <input type="email" placeholder="Email" />
                         <input type="password" placeholder="Password" />
-                        <input type="text" placeholder="Name" />
-                        <button>Register</button>
+                        {/* <input type="email" placeholder="Email" /> */}
+                        <button onClick={handleReg}>Register</button>
                     </form>
                 </div>
             </div>

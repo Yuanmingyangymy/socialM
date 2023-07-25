@@ -1,62 +1,88 @@
+@import "../../style.scss";
+
 .Nav {
-    display: flex;
-    height: 50px;
-    padding: 10px 20px;
-    border-bottom: 1px solid lightgray;
-    justify-content: space-between;
-    align-items: center;
-
-
-    .left {
+    @include themify($themes) {
         display: flex;
-        padding: 5px 20px;
+        height: 50px;
+        padding: 10px 20px;
+        border-bottom: 1px solid themed("border");
+        justify-content: space-between;
         align-items: center;
-        gap: 30px;
+        // 设为粘性，在顶部
+        position: sticky;
+        top: 0;
+        background-color: themed("bg");
+        color: themed("textColor");
+        z-index: 999;
 
-        .logo {
-            font-weight: bold;
-            font-size: 20px;
-            color: darkblue;
-        }
-        .search {
+
+        .left {
             display: flex;
+            padding: 5px 20px;
             align-items: center;
-            border: 1px solid lightgrey;
-            border-radius: 8px;
-            padding: 5px;
-            
-            input {
-                border: none;
-                width: 400px;
-            }
+            gap: 50px;
 
-            .searchIcon {
+            .logo {
+                font-weight: bold;
+                font-size: 20px;
+                color: themed("logo");
+            }
+            .search {
+                display: flex;
+                align-items: center;
+                border: 1px solid themed("border");
+                border-radius: 8px;
+                padding: 5px;
                 
-                font-size: 18px;
-                color: rgb(75, 75, 75);
+                input {
+                    border: none;
+                    width: 400px;
+                    background-color: transparent;
+                    color: themed("textColor");
+                    @include mobile {
+                        display: none;
+                    }
+                }
+
+                .searchIcon {
+                    
+                    font-size: 18px;
+                    color: rgb(75, 75, 75);
+                }
             }
+            
+            
         }
-        
-        
-    }
 
-    .right {
-        display: flex;
-        align-items: center;
-        gap: 30px;
-
-        .user {
+        .right {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 500;
+            gap: 50px;
 
-            img {
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                object-fit: cover;
+            @include mobile {
+                display: none;
+            }
+
+            .svg {
+                margin-top: 4px;
+                cursor: pointer;
+            }
+
+            .user {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 500;
+
+                img {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
             }
         }
+
     }
+    
 }

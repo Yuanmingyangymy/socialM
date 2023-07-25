@@ -1,14 +1,17 @@
-import React from 'react';
+import { useContext } from 'react';
 import { Outlet, Link } from "react-router-dom";
 
+import axios from 'axios';
+
 import "./index.scss";
+import { AuthContext } from '../../context/authContext';
 
 const Login: React.FC = () => {
-//   const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext)
 
-//   const handleLogin = () => {
-//     login();
-//   };
+  const handleLogin = () => {
+    login()
+  }
 
   return (
     <div className="login">
@@ -19,17 +22,16 @@ const Login: React.FC = () => {
             welcome to join us!
           </p>
           <span>Don't you have an account?</span>
-            <Link to="/register">
-              <button>Register</button>
-            </Link>
+          <Link to="/register">
+            <button>Register</button>
+          </Link>
         </div>
         <div className="right">
           <h1>Login</h1>
           <form>
             <input type="text" placeholder="Username" />
             <input type="password" placeholder="Password" />
-            {/* <button onClick={handleLogin}>Login</button> */}
-            <button>Login</button>
+            <button onClick={handleLogin}>Login</button>
           </form>
         </div>
       </div>

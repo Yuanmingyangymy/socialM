@@ -1,4 +1,4 @@
-import React from 'react'
+import {useContext} from 'react'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -9,7 +9,6 @@ import Profile from './pages/Profile';
 import Home from './pages/Home';
 
 
-
 import {
   createBrowserRouter,
   RouterProvider,
@@ -17,7 +16,9 @@ import {
   Navigate
 } from "react-router-dom";
 
-import './App.css'
+import './App.scss'
+import { DarkModeContext } from './context/darkModeContext';
+import { AuthContext } from './context/authContext';
 
 // 判断路由的类型是否正确
 interface RouterConfig {
@@ -28,25 +29,27 @@ interface RouterConfig {
 
 
 const App: React.FC = () => {
-
-
+  // 暗夜模式
+  const {darkMode} = useContext(DarkModeContext)
+  // 用户信息(判断是否登录)
+  const {currentUser} = useContext(AuthContext)
+  
 
   const Layout: React.FC = () => {
     return (
-      <div>
+      <div className={`theme-${darkMode ? 'dark' : 'light'}`}>
         <NavBar/>
-        <div style={{display: 'flex'}}>
+        <div style={{display: "flex"}}>
           <LeftBar/>
-          <Outlet/>
-          <RightBar/>
-
+          <div style={{flex: 6}}>
+            <Outlet/>
+          </div>
+        <RightBar/>
         </div>
       </div>
     )
   }
 
-  // 判断是否登录
-  let isLogin = true
 
   interface ProtectedRouterProps {
     children: React.ReactNode;
@@ -55,7 +58,7 @@ const App: React.FC = () => {
 
   // 判断登录，若没有则Login
   const ProtectedRouter = ({ children }: ProtectedRouterProps) => {
-    if(!isLogin) {
+    if(!currentUser) {
       return <Navigate to="/login"/>
     }
     return <>{children}</>

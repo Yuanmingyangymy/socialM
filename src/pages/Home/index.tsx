@@ -1,10 +1,15 @@
 import React from 'react'
+import Stories from '../../components/Stories';
+import Posts from '../../components/Posts';
+
+import './index.scss'
 
 const Home: React.FC = () => {
     return (
-        <>
-        <h2>HOME</h2>
-        </>
+        <div className="home">
+            <Stories/>
+            <Posts/>
+        </div>
     )
 }
 export default Home
