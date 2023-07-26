@@ -1,36 +1,40 @@
 
+import { makeRequest } from '../../axios';
 import Post from '../Post';
 
 import './index.scss'
 
+import { useQuery } from '@tanstack/react-query'
+
 
 export const Posts: React.FC = () => {
+    interface Post {
+        id: number,
+        desc?: string,
+        img?: string,
+        userId: number,
+        createdAt?: Date
+    }
 
-    const posts = [
-        {
-            id: 1,
-            name: "yyyymy",
-            userId: 1,
-            profilePic: "https://images.unsplash.com/photo-1688649103581-efd21a8672e6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTA4fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=600&q=60",
-            desc: "Have a nice day!",
-            img: "https://plus.unsplash.com/premium_photo-1682401101581-b6be0396b706?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8NDh8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=600&q=60"
-        },
-        {
-            id: 2,
-            name: "yyyymy",
-            userId: 2,
-            profilePic: "https://images.unsplash.com/photo-1688649103581-efd21a8672e6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTA4fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=600&q=60",
-            desc: "Hello world!!!"
+    const { isLoading, error, data } = useQuery(['posts'], () => {
+        return makeRequest.get("/posts").then(res => {
+            return res.data
+        })
+    })
+    console.log(data);
 
-        }
-    ]
 
 
     return (
         <div className="posts">
-            {posts.map(post => (
-                <Post key={post.id} post={post}/> 
-            ))}
+            {   error ?
+                "出现错误，请稍后再试。" :
+                isLoading ?
+                    "加载中……" :
+                    data.map((post: any) => (
+                        <Post key={post.id} post={post} />
+                    ))
+            }
         </div>
     )
 }

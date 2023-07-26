@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext<any>(null)
@@ -6,12 +7,14 @@ interface contextEle {
     children: React.ReactNode
 }
 export const AuthModeContextProvider = ({children}: contextEle) => {
+    const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")!) || null)
 
-    const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")!) || false)
+    const login =async (inputs:any) => {
+        const res = await axios.post("http://localhost:8800/api/auth/login", inputs, {
+            withCredentials: true,
+        })
 
-    const login = () => {
-        // 登录处理函数
-        setCurrentUser({id:1, username: "Ymy", profilePic:"https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4"})
+        setCurrentUser(res.data)
     }
 
 

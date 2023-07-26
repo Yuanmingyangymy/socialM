@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import { Outlet, Link } from "react-router-dom";
+import { useContext, useState, ChangeEvent, MouseEvent } from 'react';
+import { Outlet, Link, useNavigate } from "react-router-dom";
 
 import axios from 'axios';
 
@@ -8,9 +8,33 @@ import { AuthContext } from '../../context/authContext';
 
 const Login: React.FC = () => {
   const { login } = useContext(AuthContext)
+  // 完成登录后跳转
+  const navigate = useNavigate()
+  interface userData {
+    username: string;
+    password: string;
+  }
+  // 表单信息
+  const [inputs, setInputs] = useState<userData>({
+    username: "",
+    password: "",
+  })
 
-  const handleLogin = () => {
-    login()
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+
+  }
+  
+  // 错误信息
+  const [err, setErr] = useState(null)
+  const handleLogin = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    try {
+      await login(inputs)
+      navigate("/")
+    } catch (err: any) {
+      setErr(err.response.data)
+    }
   }
 
   return (
@@ -29,8 +53,9 @@ const Login: React.FC = () => {
         <div className="right">
           <h1>Login</h1>
           <form>
-            <input type="text" placeholder="Username" />
-            <input type="password" placeholder="Password" />
+            <input type="text" placeholder="Username" name='username' onChange={handleChange} />
+            <input type="password" placeholder="Password" name='password' onChange={handleChange} />
+            {err && err}
             <button onClick={handleLogin}>Login</button>
           </form>
         </div>

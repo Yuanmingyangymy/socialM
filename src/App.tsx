@@ -1,4 +1,4 @@
-import {useContext} from 'react'
+import { useContext } from 'react'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -7,7 +7,6 @@ import LeftBar from './components/LeftBar';
 import RightBar from './components/RightBar';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
-
 
 import {
   createBrowserRouter,
@@ -19,47 +18,51 @@ import {
 import './App.scss'
 import { DarkModeContext } from './context/darkModeContext';
 import { AuthContext } from './context/authContext';
+// 使用react query
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
+const queryClient = new QueryClient()
 // 判断路由的类型是否正确
 interface RouterConfig {
   path: string;
   element: React.ReactNode;
 }
 
-
-
 const App: React.FC = () => {
   // 暗夜模式
-  const {darkMode} = useContext(DarkModeContext)
+  const { darkMode } = useContext(DarkModeContext)
   // 用户信息(判断是否登录)
-  const {currentUser} = useContext(AuthContext)
-  
+  const { currentUser } = useContext(AuthContext)
 
   const Layout: React.FC = () => {
     return (
-      <div className={`theme-${darkMode ? 'dark' : 'light'}`}>
-        <NavBar/>
-        <div style={{display: "flex"}}>
-          <LeftBar/>
-          <div style={{flex: 6}}>
-            <Outlet/>
+      <QueryClientProvider client={queryClient}>
+        <div className={`theme-${darkMode ? 'dark' : 'light'}`}>
+          <NavBar />
+          <div style={{ display: "flex" }}>
+            <LeftBar />
+            <div style={{ flex: 6 }}>
+              <Outlet />
+            </div>
+            <RightBar />
           </div>
-        <RightBar/>
         </div>
-      </div>
+      </QueryClientProvider>
+
     )
   }
-
 
   interface ProtectedRouterProps {
     children: React.ReactNode;
   }
-  
 
   // 判断登录，若没有则Login
   const ProtectedRouter = ({ children }: ProtectedRouterProps) => {
-    if(!currentUser) {
-      return <Navigate to="/login"/>
+    if (!currentUser) {
+      return <Navigate to="/login" />
     }
     return <>{children}</>
   }
@@ -68,29 +71,29 @@ const App: React.FC = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: 
+      element:
         <ProtectedRouter>
-          <Layout/>
+          <Layout />
         </ProtectedRouter>,
       children: [
         {
           path: "/",
-          element: <Home/>,
+          element: <Home />,
         },
         {
           path: "/profile/:id",
-          element: <Profile/>
+          element: <Profile />
         }
 
       ]
     },
     {
       path: "/login",
-      element: <Login/>,
+      element: <Login />,
     },
     {
       path: "/register",
-      element: <Register/>,
+      element: <Register />,
     }
   ]);
 

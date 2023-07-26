@@ -13,7 +13,7 @@ const LeftBar: React.FC = () => {
             <div className="container">
                 <div className="menu">
                     <div className="user">
-                        <img src={currentUser.profilePic} alt="用户头像" />
+                        <img src={currentUser.profilePic}/>
                         <span>{currentUser.username}</span>
                     </div>
                     <div className="item">

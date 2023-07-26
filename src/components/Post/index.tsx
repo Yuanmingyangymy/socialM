@@ -48,7 +48,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                 {/* 帖子内容 */}
                 <div className="content">
                     <p>{post.desc}</p>
-                    <img src={post.img} alt="" />
+                    <img src={"./upload/" + post.img} alt="" />
                 </div>
                 {/* 点赞，评论，转发分享 */}
                 <div className="info">
