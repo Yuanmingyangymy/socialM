@@ -61,12 +61,10 @@ const Share: React.FC = () => {
         e.preventDefault()
         let imgUrl = ""
         if (file) imgUrl = await upload()
+        console.log(imgUrl);
+        
         try {
-            makeRequest.post("/posts", { desc, img: imgUrl }).then(res => {
-                console.log(res);
-                // 请求成功后更新标记值
-                setRefresh(true);
-            })
+            makeRequest.post("/posts", { desc, img: imgUrl })
         } catch (error) {
             console.error(error);
 
@@ -74,13 +72,13 @@ const Share: React.FC = () => {
 
     }
     // 在需要刷新的部分页面组件中使用 refresh 值来触发重新渲染
-    useEffect(() => {
-        // 处理页面内容的刷新逻辑
-        <Posts/>
+    // useEffect(() => {
+    //     // 处理页面内容的刷新逻辑
+    //     <Posts/>
 
-        // 清除标记值
-        setRefresh(false);
-    }, [refresh]);
+    //     // 清除标记值
+    //     setRefresh(false);
+    // }, [refresh]);
 
     // antd按钮
     return (

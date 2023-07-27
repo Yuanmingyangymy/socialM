@@ -3,19 +3,25 @@ import { Link } from 'react-router-dom';
 import './index.scss'
 
 import { EllipsisOutlined, HeartOutlined, HeartFilled, MessageOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, MouseEvent, useContext } from 'react';
 import Comments from '../Comments';
 import Share from '../Share';
+import moment from 'moment';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { makeRequest } from '../../axios';
+import { AuthContext } from '../../context/authContext';
 
 
 interface PostProps {
     post: {
         id: number;
-        name: string;
+        username: string;
         userId: number;
         profilePic: string;
         desc: string;
         img?: string;
+        createdAt?: any
     };
 }
 
@@ -29,6 +35,28 @@ const Post: React.FC<PostProps> = ({ post }) => {
     // 分享转发
     const [share, setShare] = useState(false)
 
+    const {currentUser} = useContext(AuthContext)
+
+    const { isLoading, error, data } = useQuery(['likes', post.id], () => {
+        return makeRequest.get("/likes?postId="+post.id).then(res => {
+            return res.data
+        })
+    })
+    // console.log(data);
+    const handleLike = async (e: MouseEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        
+        try {
+            if(data.includes(currentUser.id)) return makeRequest.delete("/likes?postId=" + post.id)
+            return makeRequest.post("/likes", {postId: post.id})
+        } catch (error) {
+            console.error(error);
+
+        }
+
+    }
+    
+
     return (
         <div className="post">
             <div className="container">
@@ -38,9 +66,9 @@ const Post: React.FC<PostProps> = ({ post }) => {
                         <img src={post.profilePic} alt="" />
                         <div className="details">
                             <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                <span className='name'>{post.name}</span>
+                                <span className='name'>{post.username}</span>
                             </Link>
-                            <div className="date">one minute ago</div>
+                            <div className="date">{moment(post.createdAt).fromNow()}</div>
                         </div>
                     </div>
                     <EllipsisOutlined />
@@ -52,9 +80,15 @@ const Post: React.FC<PostProps> = ({ post }) => {
                 </div>
                 {/* 点赞，评论，转发分享 */}
                 <div className="info">
-                    <div className="item" onClick={() => setLiked(!liked)}>
-                        {liked ? <HeartFilled style={{color: "red"}}/> : <HeartOutlined />}
-                        88 likes
+                    <div className="item" onClick={handleLike}>
+                        {
+                            isLoading ? (
+                                "Loading"
+                            ) : data.includes(currentUser.id) ? (
+                                <HeartFilled style={{color: "red"}}/>
+                            ) : (<HeartOutlined/>)
+                        }
+                        {data && data.length} likes
                     </div>
                     <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
                         <MessageOutlined />
@@ -65,7 +99,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                         Share
                     </div>
                 </div>
-                {commentOpen && <Comments/>}
+                {commentOpen && <Comments postId={post.id}/>}
                 {share && <Share/>}
             </div>
 

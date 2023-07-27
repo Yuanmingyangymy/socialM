@@ -13,7 +13,9 @@ export const Posts: React.FC = () => {
         desc?: string,
         img?: string,
         userId: number,
-        createdAt?: Date
+        createdAt?: Date,
+        username: string,
+        profilePic: string
     }
 
     const { isLoading, error, data } = useQuery(['posts'], () => {
@@ -21,7 +23,7 @@ export const Posts: React.FC = () => {
             return res.data
         })
     })
-    console.log(data);
+    // console.log(data);
 
 
 
