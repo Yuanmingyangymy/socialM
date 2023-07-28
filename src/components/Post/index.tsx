@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './index.scss'
 
 import { EllipsisOutlined, HeartOutlined, HeartFilled, MessageOutlined, ShareAltOutlined } from '@ant-design/icons';
-import { useState, MouseEvent, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import Comments from '../Comments';
 import Share from '../Share';
 import moment from 'moment';
@@ -37,13 +37,22 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
     const {currentUser} = useContext(AuthContext)
 
+    // const [data, setData] useState()
+
+    // useEffect(() => {
+    //     makeRequest.get("likes?postId"+post.id).then(res => {
+    //         console.log(res.data);
+            
+    //     })
+    // })
+
     const { isLoading, error, data } = useQuery(['likes', post.id], () => {
         return makeRequest.get("/likes?postId="+post.id).then(res => {
             return res.data
         })
     })
     // console.log(data);
-    const handleLike = async (e: MouseEvent<HTMLDivElement>) => {
+    const handleLike = async (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault()
         
         try {
@@ -55,7 +64,10 @@ const Post: React.FC<PostProps> = ({ post }) => {
         }
 
     }
-    
+    // 路由跳转的同时返回顶部
+    const handleTop = () => {
+        window.scrollTo(0, 0)
+    }
 
     return (
         <div className="post">
@@ -66,7 +78,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                         <img src={post.profilePic} alt="" />
                         <div className="details">
                             <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                <span className='name'>{post.username}</span>
+                                <span className='name' onClick={handleTop}>{post.username}</span>
                             </Link>
                             <div className="date">{moment(post.createdAt).fromNow()}</div>
                         </div>

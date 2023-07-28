@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import './index.scss'
 
 import {
@@ -13,10 +13,11 @@ import {
 import { Button } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import Posts from '../../components/Posts';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+// import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from '../../axios';
 import { useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { log } from 'console';
 const Profile: React.FC = () => {
     // antd按钮
     const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
@@ -26,18 +27,68 @@ const Profile: React.FC = () => {
     // 获取地址栏中userId
     const userId = parseInt(useLocation().pathname.split("/")[2])
 
+    interface User {
+        id: number,
+        username: string,
+        email: string,
+        profilePic?: string,
+        coverPic?: string,
+        city?: string,
+        website?: string
 
-    const { isLoading, error, data } = useQuery(['user'], () => {
-        return makeRequest.get("/users/find/" + userId).then(res => {
-            return res.data
+    }
+
+
+    const [data, setData] = useState<User>()
+    const [follow, setFollow] = useState<number[]>([])
+
+    // const { isLoading, error, data } = useQuery(['user'], () => {
+    //     return makeRequest.get("/users/find/" + userId).then(res => {
+    //         return res.data
+    //     })
+    // })
+
+    useEffect(() => {
+        makeRequest.get("/users/find/" + userId).then(res => {
+            setData(res.data)
         })
-    })
-    console.log(data);
+        
+    }, [])
+
+    useEffect(() => {
+        makeRequest.get("/relationships?followedUserId=" + userId).then(res => {
+            
+            // console.log(res.data);
+            setFollow(res.data)           
+        })
+    }, [])
+
+
+    // 关注事件
+    const handleFollow = async () => {
+        if(follow.includes(currentUser.id)) {
+            await makeRequest.post("/relationships/delete", {userId}).then(res => {
+                
+                if(res.status === 200) {
+                    setFollow(follow.filter(id => id !== currentUser.id))
+                    // console.log("关注成功");                  
+
+                } else {
+                    return
+                }
+                
+            })
+
+        } else {
+            await makeRequest.post("/relationships", {userId})
+            setFollow([...follow, currentUser.id])
+        }
+    }
 
     return (
         <div className="profile">
             {
-                isLoading ?
+                !data ?
                     "Loading……" :
                     (
                         <>
@@ -51,9 +102,9 @@ const Profile: React.FC = () => {
                                     )
                                 } */}
                                 {/* 个人主页背景图 */}
-                                <img src={data.coverPic} alt="" className="cover" />
+                                <img src={data?.coverPic} alt="" className="cover" />
                                 {/* 用户头像 */}
-                                <img src={data.profilePic} alt="" className="profilePic" />
+                                <img src={data?.profilePic} alt="" className="profilePic" />
                             </div>
                             <div className="profileContainer">
                                 <div className="linkInfo">
@@ -65,15 +116,15 @@ const Profile: React.FC = () => {
 
                                     </div>
                                     <div className="center">
-                                        <span className='name'>{data.username}</span>
+                                        <span className='name'>{data?.username}</span>
                                         <div className="items">
                                             <div className="item">
                                                 <EnvironmentOutlined style={{ fontSize: "20px" }} />
-                                                <span>{data.city}</span>
+                                                <span>{data?.city}</span>
                                             </div>
                                             <div className="item">
                                                 <GlobalOutlined style={{ fontSize: "20px" }} />
-                                                <span>{data.website}</span>
+                                                <span>{data?.website}</span>
                                             </div>
                                         </div>
 
@@ -83,8 +134,8 @@ const Profile: React.FC = () => {
                                                 (<Button type="primary" size={size} className='follow'>
                                                     Update
                                                 </Button>) :
-                                                (<Button type="primary" size={size} className='follow'>
-                                                    Follow
+                                                (<Button type="primary" size={size} className='follow' onClick={handleFollow}>
+                                                    {follow?.includes(currentUser.id) ? "Following" : "Follow"}
                                                 </Button>)
                                         }
 

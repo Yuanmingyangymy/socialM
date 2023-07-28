@@ -3,10 +3,8 @@ import { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext<any>(null)
 
-interface contextEle {
-    children: React.ReactNode
-}
-export const AuthModeContextProvider = ({children}: contextEle) => {
+
+export const AuthModeContextProvider = ({children}: {children: React.ReactNode}) => {
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")!) || null)
 
     const login =async (inputs:any) => {
