@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent, MouseEvent  } from 'react';
+import React, { useState, ChangeEvent, MouseEvent, useEffect  } from 'react';
 import axios from 'axios';
 import { Outlet, Link } from "react-router-dom";
 import './index.scss';
+import { Button, message, Space } from 'antd';
 
 const Register: React.FC = () => {
     interface userData {
@@ -18,22 +19,47 @@ const Register: React.FC = () => {
     // 错误信息
     const [err, setErr] = useState(null)
 
+    // 网络请求反馈
+    const [messageApi, contextHolder] = message.useMessage()
+
+    const success = (content:string) => {
+        messageApi.open({
+          type: 'success',
+          content: '注册成功',
+        });
+      };
+    
+      const error = (content:string) => {
+        messageApi.open({
+          type: 'error',
+          content: '注册失败',
+        });
+      };
+
     function handleChange(e:ChangeEvent<HTMLInputElement>) {
         setInputs((prev) => ({...prev, [e.target.name]: e.target.value}))
 
     }
 
-    async function handleReg(e: MouseEvent<HTMLButtonElement>) {
-        e.preventDefault()
+    async function handleReg(e?: MouseEvent<HTMLButtonElement>) {
+        e?.preventDefault()
         try {
-            await axios.post("http://localhost:8800/api/auth/register", inputs)
+            const res = await axios.post("http://localhost:8800/api/auth/register", inputs).then(res => {
+                console.log(res.data);
+                
+                if(res.status === 409) {
+                    message.error('用户名已存在！请更换用户名')
+                } else if(res.status === 200) {
+                    message.success('注册成功！')
+                }
+            })
             
         } catch (err: any) {
-            console.log(err);
+            throw(err)
             
-            setErr(err.response.data)
         }
     }
+    
 
 
     return (

@@ -1,4 +1,5 @@
 
+import { type } from 'os';
 import { makeRequest } from '../../axios';
 import Post from '../Post';
 
@@ -6,8 +7,12 @@ import './index.scss'
 
 import { useQuery } from '@tanstack/react-query'
 
+type PostsProps = {
+    userId?: number
+}
 
-export const Posts: React.FC = () => {
+
+export const Posts: React.FC<PostsProps> = ({userId}) => {
     interface Post {
         id: number,
         desc?: string,
@@ -19,7 +24,7 @@ export const Posts: React.FC = () => {
     }
 
     const { isLoading, error, data } = useQuery(['posts'], () => {
-        return makeRequest.get("/posts").then(res => {
+        return makeRequest.get("/posts?userId=" + userId).then(res => {
             return res.data
         })
     })
