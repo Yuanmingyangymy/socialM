@@ -1,8 +1,7 @@
-
-import { type } from 'os';
+import { useEffect, useContext, useState } from 'react';
 import { makeRequest } from '../../axios';
 import Post from '../Post';
-
+import { StateContext } from '../../context/stateChange';
 import './index.scss'
 
 import { useQuery } from '@tanstack/react-query'
@@ -12,7 +11,7 @@ type PostsProps = {
 }
 
 
-export const Posts: React.FC<PostsProps> = ({userId}) => {
+export const Posts: React.FC<PostsProps> = ({ userId }) => {
     interface Post {
         id: number,
         desc?: string,
@@ -23,24 +22,30 @@ export const Posts: React.FC<PostsProps> = ({userId}) => {
         profilePic: string
     }
 
-    const { isLoading, error, data } = useQuery(['posts'], () => {
-        return makeRequest.get("/posts?userId=" + userId).then(res => {
-            return res.data
+    // const { isLoading, error, data } = useQuery(['posts'], () => {
+    //     return makeRequest.get("/posts?userId=" + userId).then(res => {
+    //         return res.data
+    //     })
+    // })
+
+    const { refresh, setRefresh } = useContext(StateContext)
+    const [data, setData] = useState([])
+    useEffect(() => {
+        makeRequest.get("/posts?userId=" + userId).then(res => {
+            setData(res.data)
+            
         })
-    })
-    // console.log(data);
+        
+        setRefresh(false)
+    }, [refresh, setRefresh])
 
 
 
     return (
         <div className="posts">
-            {   error ?
-                "出现错误，请稍后再试。" :
-                isLoading ?
-                    "加载中……" :
-                    data.map((post: any) => (
-                        <Post key={post.id} post={post} />
-                    ))
+            {data.map((post: any) => (
+                <Post key={post.id} post={post} />
+            ))
             }
         </div>
     )

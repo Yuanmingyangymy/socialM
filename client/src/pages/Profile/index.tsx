@@ -20,7 +20,7 @@ import { AuthContext } from '../../context/authContext';
 import Update from '../../components/Update';
 const Profile: React.FC = () => {
     // antd按钮
-    const [size, setSize] = useState<SizeType>('large'); // default is 'middle'
+    const [size] = useState<SizeType>('large'); // default is 'middle'
     // 获取当前用户ID与当前个人信息页面用户ID比较，看是更新个人信息还是关注/取关
     const { currentUser } = useContext(AuthContext)
 
@@ -56,7 +56,7 @@ const Profile: React.FC = () => {
             setData(res.data)
         })
         
-    }, [])
+    }, [userId])
 
     useEffect(() => {
         makeRequest.get("/relationships?followedUserId=" + userId).then(res => {
@@ -64,7 +64,7 @@ const Profile: React.FC = () => {
             // console.log(res.data);
             setFollow(res.data)           
         })
-    }, [])
+    }, [userId])
 
 
     // 关注事件

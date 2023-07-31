@@ -1,15 +1,13 @@
 import { useContext, useState, ChangeEvent, MouseEvent } from 'react';
-import { Outlet, Link, useNavigate } from "react-router-dom";
-
-import axios from 'axios';
+import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 import "./index.scss";
 import { AuthContext } from '../../context/authContext';
 
 const Login: React.FC = () => {
   const { login } = useContext(AuthContext)
-  // 完成登录后跳转
-  const navigate = useNavigate()
+
   interface userData {
     username: string;
     password: string;
@@ -24,14 +22,19 @@ const Login: React.FC = () => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }))
 
   }
-  
+  // 完成登录后跳转
+  const navigate = useNavigate()
+
   // 错误信息
   const [err, setErr] = useState(null)
   const handleLogin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     try {
-      await login(inputs)
-      navigate("/")
+      const res = await login(inputs)
+      if(res === '200') {
+        navigate("/")
+      }
+      
     } catch (err: any) {
       setErr(err.response.data)
     }
@@ -55,7 +58,6 @@ const Login: React.FC = () => {
           <form>
             <input type="text" placeholder="Username" name='username' onChange={handleChange} />
             <input type="password" placeholder="Password" name='password' onChange={handleChange} />
-            {err && err}
             <button onClick={handleLogin}>Login</button>
           </form>
         </div>

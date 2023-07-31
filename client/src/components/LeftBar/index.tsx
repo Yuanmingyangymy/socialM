@@ -1,5 +1,7 @@
 import { useContext } from 'react'
 import { AuthContext } from '../../context/authContext';
+import { Link } from 'react-router-dom';
+
 
 
 import './index.scss'
@@ -12,10 +14,13 @@ const LeftBar: React.FC = () => {
         <div className="leftBar">
             <div className="container">
                 <div className="menu">
-                    <div className="user">
-                        <img src={currentUser.profilePic}/>
-                        <span>{currentUser.username}</span>
-                    </div>
+                    <Link to={`/profile/${currentUser.id}`} style={{textDecoration: "none", color: "inherit"}}>
+                        <div className="user">
+                            <img src={"/upload/" + currentUser.profilePic}/>
+                            <span>{currentUser.username}</span>
+                        </div>
+                    </Link>
+                    
                     <div className="item">
                         <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/1.png?raw=true" alt="" />
                         <span>Friends</span>

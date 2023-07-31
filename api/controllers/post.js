@@ -33,7 +33,7 @@ export const addPost = (req, res) => {
     const token = req.cookies.accessToken
     if(!token) return res.status(401).json("未登录！")
     jwt.verify(token, "secretkey", (err, userInfo) => {
-        if(err) return res.status(403).json("Token is not valid!")
+        if(err) return res.status(403).json("用户登录已过期，请重新登录")
         const q = "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`) VALUES (?)"
 
         const values = [
@@ -54,7 +54,7 @@ export const deletePost = (req, res) => {
     const token = req.cookies.accessToken
     if(!token) return res.status(401).json("未登录！")
     jwt.verify(token, "secretkey", (err, userInfo) => {
-        if(err) return res.status(403).json("Token is not valid!")
+        if(err) return res.status(403).json("用户登录已过期，请重新登录")
         const q = "DELETE FROM posts WHERE `id` = ? AND `userId` = ?"
 
         db.query(q, [req.params.id, userInfo.id], (err, data) => {

@@ -3,9 +3,11 @@ import { useContext, useState, MouseEvent, useEffect } from "react";
 import { AuthContext } from "../../context/authContext";
 import { Button } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+// import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from "../../axios";
-import Posts from "../Posts";
+import { StateContext } from '../../context/stateChange';
+import { message } from 'antd';
+
 
 const Share: React.FC = () => {
 
@@ -15,7 +17,6 @@ const Share: React.FC = () => {
     const [file, setFile] = useState<File | null>({} as File)
     const [desc, setDesc] = useState<string>("")
 
-    const [refresh, setRefresh] = useState(false)
 
     const upload = async () => {
         try {
@@ -23,7 +24,14 @@ const Share: React.FC = () => {
             if (file) {
                 formData.append("file", file)
                 const res = await makeRequest.post("/upload", formData)
+                if(res.status === 200) {
+                    message.success('添加图片成功')
+                } else {
+                    message.error('添加图片失败')
+                }
+                
                 return res.data
+                
             }
         } catch (error) {
             console.log(error);
@@ -56,37 +64,41 @@ const Share: React.FC = () => {
     //         console.error(error);
     //     }
     // }
+    const { setRefresh } = useContext(StateContext)
 
     const handleShare = async (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         let imgUrl = ""
         if (file) imgUrl = await upload()
-        console.log(imgUrl);
         
         try {
-            makeRequest.post("/posts", { desc, img: imgUrl })
+            makeRequest.post("/posts", { desc, img: imgUrl }).then(res => {
+                if (res.status === 401) {
+                    message.error('未登录！');
+                } else if (res.status === 403) {
+                    message.error('用户登录已过期，请重新登录');
+                } else if (res.status === 200) {
+                    message.success('发布成功');
+                }
+            })
+            e.preventDefault()
+            setDesc('')
+            setFile({} as File)
+            setRefresh(true)
+            
         } catch (error) {
             console.error(error);
 
         }
 
     }
-    // 在需要刷新的部分页面组件中使用 refresh 值来触发重新渲染
-    // useEffect(() => {
-    //     // 处理页面内容的刷新逻辑
-    //     <Posts/>
 
-    //     // 清除标记值
-    //     setRefresh(false);
-    // }, [refresh]);
-
-    // antd按钮
     return (
         <div className="share">
             <div className="container">
                 <div className="top">
                     <img
-                        src={currentUser.profilePic}
+                        src={"/upload/" + currentUser.profilePic}
                         alt=""
                     />
                     <input

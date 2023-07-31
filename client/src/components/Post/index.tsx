@@ -11,8 +11,10 @@ import moment from 'moment';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from '../../axios';
 import { AuthContext } from '../../context/authContext';
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
+import { message } from 'antd';
+
 
 
 interface PostProps {
@@ -50,13 +52,17 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
     //     })
     // })
-
-    const { isLoading, error, data } = useQuery(['likes', post.id], () => {
-        return makeRequest.get("/likes?postId=" + post.id).then(res => {
-            return res.data
+    const [data, setData] = useState<object[]>([])
+    // 判断是否点赞，如果点了，更新，useEffect监听
+    const [isLike, setIsLike] = useState(false)
+    useEffect(() => {
+        makeRequest.get("/likes?postId=" + post.id).then(res => {
+            console.log(res);
+            setData(res.data)
         })
-    })
-    // console.log(data);
+    }, [isLike])
+
+    
     const handleLike = async (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault()
 
@@ -76,7 +82,15 @@ const Post: React.FC<PostProps> = ({ post }) => {
 
     // 删除帖子
     const handleDelete = () => {
-        makeRequest.delete("/posts/" + post.id)
+        makeRequest.delete("/posts/" + post.id).then(res => {
+            if (res.status === 401) {
+                message.error('未登录！');
+            } else if (res.status === 403) {
+                message.error('用户登录已过期，请重新登录');
+            } else if (res.status === 200) {
+                message.success('删除成功');
+            }
+        })
     }
 
     return (
@@ -85,7 +99,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                 {/* 个人信息区域 */}
                 <div className="user">
                     <div className="userInfo">
-                        <img src={post.profilePic} alt="" />
+                        <img src={"/upload/" + post.profilePic} alt="" />
                         <div className="details">
                             <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 <span className='name' onClick={handleTop}>{post.username}</span>
@@ -93,13 +107,29 @@ const Post: React.FC<PostProps> = ({ post }) => {
                             <div className="date">{moment(post.createdAt).fromNow()}</div>
                         </div>
                     </div>
-                    <EllipsisOutlined onClick={() => setMenuOpen(!menuOpen)} />
+                    {
+                        post.userId === currentUser.id
+                        &&
+                        <Popconfirm
+                            title="Delete the task"
+                            description="确定删除?"
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={handleDelete}
+                        >
+                            <Button type="primary" size={size} danger>
+                                删除
+                            </Button>
+                        </Popconfirm>
+
+                    }
+                    {/* <EllipsisOutlined style={font ? {display: "none"} : {display: "block"}} onClick={handleClick} />
                     {menuOpen
                         && post.userId === currentUser.id
-                        && <Button type="primary" size={size} danger onClick={handleDelete}>
+                        && <Button type="primary" size={size} danger  onClick={handleDelete}>
                             删除
                         </Button>
-                    }
+                    } */}
                 </div>
                 {/* 帖子内容 */}
                 <div className="content">
@@ -110,9 +140,7 @@ const Post: React.FC<PostProps> = ({ post }) => {
                 <div className="info">
                     <div className="item" onClick={handleLike}>
                         {
-                            isLoading ? (
-                                "Loading"
-                            ) : data.includes(currentUser.id) ? (
+                            data.includes(currentUser.id) ? (
                                 <HeartFilled style={{ color: "red" }} />
                             ) : (<HeartOutlined />)
                         }

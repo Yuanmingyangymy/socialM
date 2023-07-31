@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 
 import "./index.scss"
 
 import { Button } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import { makeRequest } from '../../axios';
+import { AuthContext } from '../../context/authContext';
 
 type UpdateProps = {
     setOpenUpdate: React.Dispatch<React.SetStateAction<boolean>>
@@ -56,15 +57,24 @@ const Update: React.FC<UpdateProps> = ({ setOpenUpdate, user }) => {
         }
     }
 
-
+    const { currentUser, setCurrentUser } = useContext(AuthContext)
+    
     const handleUpdate = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         let coverUrl = cover ? await upload(cover) : user.coverPic
         let profileUrl = cover ? await upload(profile) :  user.profilePic
         
         try {
-            makeRequest.put("/users", {...text, coverPic: coverUrl, profilePic: profileUrl})
+            await makeRequest.put("/users", {...text, coverPic: coverUrl, profilePic: profileUrl})
+            const newUser = {...currentUser, ...text, coverPic: coverUrl, profilePic: profileUrl}
+            console.log(currentUser);
+            
+            setCurrentUser(...currentUser, ...newUser)
+            console.log(currentUser);
+            
             setOpenUpdate(false)
+
+
         } catch (error) {
             console.error(error);
 

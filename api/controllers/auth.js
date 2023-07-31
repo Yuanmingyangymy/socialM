@@ -13,7 +13,7 @@ export const register = (req, res) => {
             return res.status(500).json(err)
         }
 
-        if (data.length) res.status(409).json("用户名已存在！请更换用户名")
+        if (data.length) return res.status(409).json("用户名已存在！请更换用户名")
         // 加密密码
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(req.body.password, salt)

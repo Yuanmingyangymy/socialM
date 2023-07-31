@@ -4,15 +4,36 @@ import { HomeOutlined, AppstoreOutlined, SearchOutlined, PoweroffOutlined, Comme
 import { Link } from 'react-router-dom'
 import { DarkModeContext } from '../../context/darkModeContext';
 import { AuthContext } from '../../context/authContext';
-
+import { Button, Popover } from 'antd';
 
 import './index.scss'
+import { click } from '@testing-library/user-event/dist/click';
+import axios from 'axios';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 
 const NavBar: React.FC = () => {
 
     const { toggle, darkMode } = useContext(DarkModeContext)
     const { currentUser } = useContext(AuthContext)
+    const navigate = useNavigate()
+
+    const handleClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
+        axios.post('http://localhost:8800/api/auth/logout').then(res => {
+            if(res.status === 200) {
+                message.success('退出登录成功')
+                navigate('/register')
+            }
+        })
+        
+    }
+    const content = (
+        <div>
+            <p className='logout' onClick={handleClick}>退出登录</p>
+        </div>
+    );
+    
 
 
     return (
@@ -37,10 +58,14 @@ const NavBar: React.FC = () => {
 
                 <CommentOutlined />
                 <UserOutlined />
-                <div className="user">
-                    <img src={currentUser.profilePic} alt="" />
-                    <span>{currentUser.username}</span>
-                </div>
+                <Popover content={content} overlayInnerStyle={{cursor: 'pointer'}} trigger={['click']}>
+                    <div className="user">
+                        <img src={"/upload/" + currentUser.profilePic} alt="" />
+                        <span>{currentUser.username}</span>
+                    </div>
+                </Popover>
+                
+
 
             </div>
         </div>

@@ -27,31 +27,33 @@
                 font-size: 20px;
                 color: themed("logo");
             }
+
             .search {
                 display: flex;
                 align-items: center;
                 border: 1px solid themed("border");
                 border-radius: 8px;
                 padding: 5px;
-                
+
                 input {
                     border: none;
                     width: 400px;
                     background-color: transparent;
                     color: themed("textColor");
+
                     @include mobile {
                         display: none;
                     }
                 }
 
                 .searchIcon {
-                    
+
                     font-size: 18px;
                     color: rgb(75, 75, 75);
                 }
             }
-            
-            
+
+
         }
 
         .right {
@@ -68,21 +70,30 @@
                 cursor: pointer;
             }
 
+            .ant-popover-content p {
+                margin: 0;
+                background-color: blue;
+
+            }
+            .logout {
+            }
+
             .user {
                 display: flex;
                 align-items: center;
                 gap: 10px;
                 font-weight: 500;
-
+                cursor: pointer;
                 img {
                     width: 30px;
                     height: 30px;
                     border-radius: 50%;
                     object-fit: cover;
                 }
+
             }
         }
 
     }
-    
+
 }

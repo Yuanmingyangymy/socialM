@@ -33,7 +33,7 @@ export const Stories: React.FC = () => {
     return (
         <div className="stories">
             <div className="story">
-                <img src={currentUser.profilePic} alt="" />
+                <img src={"/upload/" + currentUser.profilePic} alt="" />
                 <span>{currentUser.username}</span>
                 <button>+</button>
             </div>
