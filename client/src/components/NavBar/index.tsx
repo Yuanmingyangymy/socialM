@@ -1,29 +1,32 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
-import { HomeOutlined, AppstoreOutlined, SearchOutlined, PoweroffOutlined, CommentOutlined, FireOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, AppstoreOutlined, SearchOutlined, CommentOutlined, FireOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom'
 import { DarkModeContext } from '../../context/darkModeContext';
 import { AuthContext } from '../../context/authContext';
-import { Button, Popover } from 'antd';
+import { Popover } from 'antd';
 
 import './index.scss'
-import { click } from '@testing-library/user-event/dist/click';
 import axios from 'axios';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { makeRequest } from '../../axios';
 
 
 const NavBar: React.FC = () => {
 
     const { toggle, darkMode } = useContext(DarkModeContext)
     const { currentUser } = useContext(AuthContext)
+    
+    
     const navigate = useNavigate()
 
     const handleClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
-        axios.post('http://localhost:8800/api/auth/logout').then(res => {
+        makeRequest.post('http://localhost:8800/api/auth/logout').then(res => {
             if(res.status === 200) {
                 message.success('退出登录成功')
-                navigate('/register')
+                localStorage.removeItem('user')
+                navigate('/login')
             }
         })
         
@@ -60,7 +63,7 @@ const NavBar: React.FC = () => {
                 <UserOutlined />
                 <Popover content={content} overlayInnerStyle={{cursor: 'pointer'}} trigger={['click']}>
                     <div className="user">
-                        <img src={"/upload/" + currentUser.profilePic} alt="" />
+                        <img src={currentUser.profilePic ? "/upload/" + currentUser.profilePic : "/assets/user.jpg"} alt="" />
                         <span>{currentUser.username}</span>
                     </div>
                 </Popover>

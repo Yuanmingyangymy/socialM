@@ -13,47 +13,16 @@ interface CommentProps {
 
 const Comments: React.FC<CommentProps> = ({ postId }) => {
 
-    interface commentType {
-        id: number;
-        username: string;
-        userId: number;
-        profilePic: string;
-        desc: string;
-        img?: string;
-        createdAt?: any
-    }
-
     const [desc, setDesc] = useState<string>(" ")
 
-    // const { isLoading, error, data } = useQuery(['comments'], () => {
-    //     return makeRequest.get("/comments?postId=" + postId).then(res => {
-    //         return res.data
-    //     })
-    // })
-
-    // const queryClient = useQueryClient()
-    // const mutation = useMutation(
-    //     (newComment) => {
-    //         return makeRequest.post("/comments", newComment)
-    //     },
-    //     {
-    //         onSuccess: () => {
-    //             // Invalidate and refetch
-    //             queryClient.invalidateQueries(["comments"])
-    //         },
-    //     })
-
-    // const handleComment = async (e: MouseEvent<HTMLButtonElement>) => {
-    //     e.preventDefault()
-    //     mutation.mutate({ desc, postId})
-    //     setDesc("")
-    // }
     const [data, setData] = useState([])
+    // 判断是否评论
+    const [ok, setOk] = useState(false)
     useEffect(() => {
         makeRequest.get("/comments?postId=" + postId).then(res => {
             setData(res.data)
         })
-    }, [])
+    }, [ok])
     const handleComment = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
 
@@ -65,6 +34,7 @@ const Comments: React.FC<CommentProps> = ({ postId }) => {
                     message.error('用户登录已过期，请重新登录');
                 } else if (res.status === 200) {
                     message.success('评论成功');
+                    setOk(!ok)
                 }
                 setDesc("")
             })
@@ -78,14 +48,14 @@ const Comments: React.FC<CommentProps> = ({ postId }) => {
     const { currentUser } = useContext(AuthContext)
 
     // antd按钮
-    const [size, setSize] = useState<SizeType>('middle'); // default is 'middle'
+    const [size] = useState<SizeType>('middle'); // default is 'middle'
 
 
 
     return (
         <div className="comments">
             <div className="write">
-                <img src={"/upload/" + currentUser.profilePic} alt="" />
+                <img src={currentUser.profilePic ? "/upload/" + currentUser.profilePic : "/assets/user.jpg"} alt="" />
                 <input type="text" value={desc} onChange={e => setDesc(e.target.value)} />
                 <Button type="primary" size={size} onClick={handleComment}>
                     Send

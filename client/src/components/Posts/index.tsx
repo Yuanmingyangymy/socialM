@@ -1,17 +1,21 @@
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeRequest } from '../../axios';
 import Post from '../Post';
-import { StateContext } from '../../context/stateChange';
 import './index.scss'
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
-import { useQuery } from '@tanstack/react-query'
+
 
 type PostsProps = {
     userId?: number
+    refresh?: boolean
+    setRefresh?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
-export const Posts: React.FC<PostsProps> = ({ userId }) => {
+export const Posts: React.FC<PostsProps> = ({ userId, refresh, setRefresh }) => {
+    
     interface Post {
         id: number,
         desc?: string,
@@ -27,24 +31,40 @@ export const Posts: React.FC<PostsProps> = ({ userId }) => {
     //         return res.data
     //     })
     // })
-
-    const { refresh, setRefresh } = useContext(StateContext)
+    const navigate = useNavigate()
     const [data, setData] = useState([])
+    // const {posts, setPosts} = usePostsContext()
     useEffect(() => {
-        makeRequest.get("/posts?userId=" + userId).then(res => {
-            setData(res.data)
-            
-        })
+        const fetchPosts = async () => {
+            try {
+                const res = await makeRequest.get("/posts?userId=" + userId)
+                setData(res.data)
+                
+            } catch (error: any) {
+                if (error.response.status === 401) {
+                    // 处理未登录的情况，跳转到登录页面或提示用户登录
+                    message.error('未登录！');
+                    navigate("/login")
+                    // 弹出提示框：message.error('请先登录！');
+                } else if (error.response.status === 403) {
+                    // 处理登录过期的情况，跳转到登录页面或提示用户重新登录
+                    message.error('用户登录已过期，请重新登录');
+                    navigate("/login")
+
+                }
+            }
+        }
+        // 第一次加载时触发获取帖子数据
+        fetchPosts()
         
-        setRefresh(false)
-    }, [refresh, setRefresh])
+    }, [refresh]);
 
 
 
     return (
         <div className="posts">
             {data.map((post: any) => (
-                <Post key={post.id} post={post} />
+                <Post key={post.id} post={post} refresh={refresh} setRefresh={setRefresh}/>
             ))
             }
         </div>

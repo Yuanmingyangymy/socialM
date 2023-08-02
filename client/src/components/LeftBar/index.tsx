@@ -9,6 +9,7 @@ import './index.scss'
 const LeftBar: React.FC = () => {
 
     const { currentUser } = useContext(AuthContext)
+    
 
     return (
         <div className="leftBar">
@@ -16,7 +17,7 @@ const LeftBar: React.FC = () => {
                 <div className="menu">
                     <Link to={`/profile/${currentUser.id}`} style={{textDecoration: "none", color: "inherit"}}>
                         <div className="user">
-                            <img src={"/upload/" + currentUser.profilePic}/>
+                            <img src={currentUser.profilePic ? "/upload/" + currentUser.profilePic : "/assets/user.jpg"}/>
                             <span>{currentUser.username}</span>
                         </div>
                     </Link>

@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
 
     // 获取地址栏中userId
     const userId = parseInt(useLocation().pathname.split("/")[2])
-
+    
     interface User {
         id: number,
         username: string,
@@ -106,9 +106,9 @@ const Profile: React.FC = () => {
                                     )
                                 } */}
                                 {/* 个人主页背景图 */}
-                                <img src={"/upload/" + data?.coverPic} alt="" className="cover" />
+                                <img src={data.coverPic ? "/upload/" + data?.coverPic : "/assets/user.avif"} alt="" className="cover" />
                                 {/* 用户头像 */}
-                                <img src={"/upload/" + data?.profilePic} alt="" className="profilePic" />
+                                <img src={data.profilePic ? "/upload/" + data?.profilePic : "/assets/user.jpg"} alt="" className="profilePic" />
                             </div>
                             <div className="profileContainer">
                                 <div className="linkInfo">
@@ -124,11 +124,11 @@ const Profile: React.FC = () => {
                                         <div className="items">
                                             <div className="item">
                                                 <EnvironmentOutlined style={{ fontSize: "20px" }} />
-                                                <span>{data?.city}</span>
+                                                <span>{data.city ? data?.city : '西安'}</span>
                                             </div>
                                             <div className="item">
                                                 <GlobalOutlined style={{ fontSize: "20px" }} />
-                                                <span>{data?.website}</span>
+                                                <span>{data.website ? data?.website : 'social.dev'}</span>
                                             </div>
                                         </div>
 

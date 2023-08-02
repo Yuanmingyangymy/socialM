@@ -1,16 +1,19 @@
 import React from 'react'
 import Stories from '../../components/Stories';
-import Posts from '../../components/Posts';
 
 import './index.scss'
 import Share from '../../components/Share';
+import PostsProvider from '../../context/PostsContext';
 
 const Home: React.FC = () => {
     return (
         <div className="home">
-            <Stories/>
-            <Share/>
-            <Posts/>
+            <PostsProvider>
+                <Stories/>
+                <Share/>
+                {/* <Posts/> */}
+            </PostsProvider>
+
         </div>
     )
 }
