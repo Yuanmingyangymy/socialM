@@ -40,6 +40,8 @@ const Share: React.FC = () => {
     // }
 
     const { currentUser } = useContext(AuthContext)
+    // console.log(currentUser);
+    
 
 
 
@@ -52,6 +54,7 @@ const Share: React.FC = () => {
         // if (file) imgUrl = await upload()
         try {
             let postData: any = { desc }
+            postData.userPic = currentUser.profilePic
             if (file) {
                 // 如果用户上传了图片，则调用上传图片接口，并将返回的文件名保存在 postData.img 中
                 const formData = new FormData();
@@ -62,13 +65,14 @@ const Share: React.FC = () => {
                     postData.img = response.data
                     // 图片上传成功后再发布帖子
                     const postResponse = await makeRequest.post("/posts", postData);
+                    console.log(postResponse);
+                    
                     if (postResponse.status === 200) {
                         message.success('发布成功');
                         // 发布成功后更新帖子数据的上下文
-                        // fetchPosts()
-                        setRefreshPosts(!refreshPosts)
                         setDesc('');
                         setFile(null);
+                        setRefreshPosts(!refreshPosts)
                     } else if (postResponse.status === 401) {
                         message.error('未登录！');
                     } else if (postResponse.status === 403) {
@@ -79,15 +83,17 @@ const Share: React.FC = () => {
                 }
                 // imgUrl = response.data;
             } else {
+
                 const response = await makeRequest.post("/posts", postData);
 
                 if (response.status === 200) {
                     message.success('发布成功');
                     // 发布成功后更新帖子数据的上下文
                     // fetchPosts()
-                    setRefreshPosts(!refreshPosts)
                     setDesc('');
                     setFile(null);
+                    setRefreshPosts(!refreshPosts)
+
                 } else if (response.status === 401) {
                     message.error('未登录！');
                 } else if (response.status === 403) {

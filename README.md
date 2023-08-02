@@ -208,11 +208,13 @@ authContext.tsx中，`withCredentials`设为true
 
 ## 遇到的问题
 
-**局部刷新**（发帖，点赞，评论，更新个人信息……）
+**局部刷新**（发帖，点赞，评论，更新个人信息……）:useState + useEffect解决
 
 **数据库操作（不重复存储，删除）**
 
 **TS没写熟，类型判断不熟练**
+
+**nodejs中想使用esmodule语法，需要在package.json文件中"main"下方添加"type": "module"**
 
 
 

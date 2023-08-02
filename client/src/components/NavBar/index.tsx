@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import { HomeOutlined, AppstoreOutlined, SearchOutlined, CommentOutlined, FireOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom'
@@ -17,26 +17,50 @@ const NavBar: React.FC = () => {
 
     const { toggle, darkMode } = useContext(DarkModeContext)
     const { currentUser } = useContext(AuthContext)
-    
-    
+
+
     const navigate = useNavigate()
 
     const handleClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
         makeRequest.post('http://localhost:8800/api/auth/logout').then(res => {
-            if(res.status === 200) {
+            if (res.status === 200) {
                 message.success('退出登录成功')
                 localStorage.removeItem('user')
                 navigate('/login')
             }
         })
-        
+
     }
     const content = (
         <div>
             <p className='logout' onClick={handleClick}>退出登录</p>
         </div>
     );
-    
+    // 搜索
+    const [searchData, setSearchData] = useState<string>('')
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchData(e.target.value)
+    }
+    const search = async (e: React.MouseEvent<HTMLSpanElement>) => {
+        e.preventDefault()
+        try {
+            const res = await makeRequest.get('/search/find/'+searchData)
+            console.log(res.data);
+            if(res.data[0] === undefined) {
+                message.warning('未找到该用户')
+            } else if(res.status === 200) {
+                message.success('搜索成功')
+                navigate(`/profile/${res.data[0].id}`)
+            }
+        
+            
+        } catch (error) {
+            message.error('出错了，请稍后再试')
+        }
+    }
+
+
+
 
 
     return (
@@ -49,8 +73,11 @@ const NavBar: React.FC = () => {
                 <AppstoreOutlined />
                 <FireOutlined />
                 <div className="search">
-                    <input type="text" placeholder='search here' />
-                    <SearchOutlined className='searchIcon' />
+                    <form>
+                        <input type="text" placeholder='search here' onChange={(e) => handleChange(e)} />
+                        <SearchOutlined className='searchIcon' onClick={search} />
+                    </form>
+
                 </div>
             </div>
             <div className="right">
@@ -61,13 +88,13 @@ const NavBar: React.FC = () => {
 
                 <CommentOutlined />
                 <UserOutlined />
-                <Popover content={content} overlayInnerStyle={{cursor: 'pointer'}} trigger={['click']}>
+                <Popover content={content} overlayInnerStyle={{ cursor: 'pointer' }} trigger={['click']}>
                     <div className="user">
                         <img src={currentUser.profilePic ? "/upload/" + currentUser.profilePic : "/assets/user.jpg"} alt="" />
                         <span>{currentUser.username}</span>
                     </div>
                 </Popover>
-                
+
 
 
             </div>

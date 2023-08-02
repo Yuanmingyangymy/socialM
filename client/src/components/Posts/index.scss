@@ -1,5 +1,13 @@
+@import "../../style.scss";
+
 .posts {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+    @include themify($themes) {
+        background-color: themed("bgSoft");
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
 }

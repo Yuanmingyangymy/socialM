@@ -10,6 +10,7 @@ import likeRoutes from './routes/likes.js';
 import commentRoutes from './routes/comments.js'
 import authRoutes from './routes/auth.js'
 import relationshipRoutes from './routes/relationship.js';
+import searchRoutes from './routes/search.js';
 
 const app = express()
 
@@ -57,6 +58,7 @@ app.use("/api/likes", likeRoutes)
 app.use("/api/comments", commentRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/relationships", relationshipRoutes)
+app.use("/api/search", searchRoutes)
 
 app.listen(8800, () => {
     console.log("api working well");

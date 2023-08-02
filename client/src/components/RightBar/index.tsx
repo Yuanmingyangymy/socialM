@@ -15,7 +15,7 @@ const RightBar: React.FC = () => {
                     <span className='intro'>Suggestions For You</span>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <span>Jay</span>
                         </div>
                         <div className="buttons">
@@ -29,7 +29,7 @@ const RightBar: React.FC = () => {
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <span>Jay</span>
                         </div>
                         <div className="buttons">
@@ -46,7 +46,7 @@ const RightBar: React.FC = () => {
                     <span className='intro'>Lastest Activities</span>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <p>
                                 <span>Jay Chou</span> changed username
                             </p>
@@ -55,7 +55,7 @@ const RightBar: React.FC = () => {
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <p>
                                 <span>Jay Chou</span> updated action
                             </p>
@@ -64,7 +64,7 @@ const RightBar: React.FC = () => {
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <p>
                                 <span>Jay Chou</span> changed pic
                             </p>
@@ -77,56 +77,56 @@ const RightBar: React.FC = () => {
                     <span className='intro'>Online Friends</span>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>
                     </div>
                     <div className="user">
                         <div className="userInfo">
-                            <img src="https://avatars.githubusercontent.com/u/106372033?s=400&u=6687fcedc05ecf0d4277e977d87e05de446dd89a&v=4" alt="用户头像" />
+                            <img src="/assets/user.jpg" alt="用户头像" />
                             <div className="online"></div>
                             <span>Jay Chou</span> 
                         </div>

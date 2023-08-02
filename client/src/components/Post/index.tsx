@@ -26,6 +26,7 @@ interface PostProps {
         desc: string;
         img?: string;
         createdAt?: any
+        userPic?: string
     }
     refresh?: boolean
     setRefresh?: React.Dispatch<React.SetStateAction<boolean>> 
@@ -34,7 +35,7 @@ interface PostProps {
 
 
 const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
-
+    
     // 评论部分是否展开
     const [commentOpen, setCommentOpen] = useState(false)
     // （删除）菜单
@@ -42,7 +43,7 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
     const [size] = useState<SizeType>('middle'); // default is 'middle'
 
     // 分享转发
-    const [share, setShare] = useState(false)
+    // const [share, setShare] = useState(false)
 
     const { currentUser } = useContext(AuthContext)
 
@@ -115,7 +116,7 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
                 {/* 个人信息区域 */}
                 <div className="user">
                     <div className="userInfo">
-                        <img src={"/upload/" + post.profilePic} alt="" />
+                        <img src={post.userPic ? "/upload/"+post.userPic : "/assets/user.jpg"} alt="" />
                         <div className="details">
                             <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 <span className='name' onClick={handleTop}>{post.username}</span>

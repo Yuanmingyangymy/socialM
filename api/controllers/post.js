@@ -2,6 +2,26 @@ import { db } from '../connect.js';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 
+
+export const getAll = (req, res) => {
+    // 进行身份认证
+    const token = req.cookies.accessToken
+    if (!token) return res.status(401).json("未登录！")
+
+    jwt.verify(token, "secretkey", (err, userInfo) => {
+        if (err) return res.status(403).json("用户登录已过期，请重新登录")
+
+        const q = `SELECT p.*, u.id AS userId, username, profilePic FROM posts AS p JOIN users AS u ON (u.id = p.userId) ORDER BY p.createdAt DESC`
+
+        db.query(q, (err, data) => {
+            console.log(data);
+            if(err)  res.status(500).json(err)
+            return res.status(200).json(data)
+        })
+    })
+
+}
+
 export const getPosts = (req, res) => {
 
     const userId = req.query.userId
@@ -22,7 +42,7 @@ export const getPosts = (req, res) => {
 
         db.query(q, values, (err, data) => {
             if (err) return res.status(500).json(err)
-            // console.log(data);
+            console.log(data);
             return res.status(200).json(data)
         })
     })
@@ -34,13 +54,14 @@ export const addPost = (req, res) => {
     if(!token) return res.status(401).json("未登录！")
     jwt.verify(token, "secretkey", (err, userInfo) => {
         if(err) return res.status(403).json("用户登录已过期，请重新登录")
-        const q = "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`) VALUES (?)"
-
+        const q = "INSERT INTO posts (`desc`, `img`, `userPic`, `createdAt`, `userId`) VALUES (?)"
+        console.log(req.body);
         const values = [
             req.body.desc,
             req.body.img,
+            req.body.userPic,
             moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-            userInfo.id
+            userInfo.id,
         ]
 
         db.query(q, [values], (err, data) => {

@@ -30,6 +30,7 @@ const Profile: React.FC = () => {
     // 获取地址栏中userId
     const userId = parseInt(useLocation().pathname.split("/")[2])
     
+    
     interface User {
         id: number,
         username: string,

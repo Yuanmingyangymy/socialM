@@ -23,23 +23,26 @@ const LeftBar: React.FC = () => {
                     </Link>
                     
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/1.png?raw=true" alt="" />
-                        <span>Friends</span>
+                        <Link to='/all' style={{textDecoration: "none", color: "inherit"}}>
+                            <img src="/assets/1.png" alt="" />
+                            <span className='check'>Everything</span>
+                        </Link>
+
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/2.png?raw=true" alt="" />
+                        <img src="/assets/2.png" alt="" />
                         <span>Groups</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/3.png?raw=true" alt="" />
+                        <img src="/assets/3.png" alt="" />
                         <span>Marketplace</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/4.png?raw=true" alt="" />
+                        <img src="/assets/4.png" alt="" />
                         <span>Watch</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/5.png?raw=true" alt="" />
+                        <img src="/assets/5.png" alt="" />
                         <span>Memories</span>
                     </div>
                 </div>
@@ -47,23 +50,23 @@ const LeftBar: React.FC = () => {
                 <div className="menu">
                     <span>Your Shortcuts</span>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/6.png?raw=true" alt="" />
+                        <img src="/assets/6.png" alt="" />
                         <span>Events</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/7.png?raw=true" alt="" />
+                        <img src="/assets/7.png" alt="" />
                         <span>Games</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/8.png?raw=true" alt="" />
+                        <img src="/assets/8.png" alt="" />
                         <span>Photos</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/9.png?raw=true" alt="" />
+                        <img src="/assets/9.png" alt="" />
                         <span>Videos</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/10.png?raw=true" alt="" />
+                        <img src="/assets/10.png" alt="" />
                         <span>Mails</span>
                     </div>
                 </div>
@@ -71,15 +74,15 @@ const LeftBar: React.FC = () => {
                 <div className="menu">
                     <span>Others</span>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/11.png?raw=true" alt="" />
+                        <img src="/assets/11.png" alt="" />
                         <span>Fundraiser</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/12.png?raw=true" alt="" />
+                        <img src="/assets/12.png" alt="" />
                         <span>Tutorials</span>
                     </div>
                     <div className="item">
-                        <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/13.png?raw=true" alt="" />
+                        <img src="/assets/13.png" alt="" />
                         <span>Courses</span>
                     </div>
                 </div>

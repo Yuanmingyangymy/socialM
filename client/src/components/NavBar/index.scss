@@ -40,6 +40,7 @@
                     width: 400px;
                     background-color: transparent;
                     color: themed("textColor");
+                    font-size: 14px;
 
                     @include mobile {
                         display: none;
@@ -74,8 +75,6 @@
                 margin: 0;
                 background-color: blue;
 
-            }
-            .logout {
             }
 
             .user {
