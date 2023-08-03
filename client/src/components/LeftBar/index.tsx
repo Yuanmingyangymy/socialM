@@ -8,6 +8,7 @@ import './index.scss'
 
 const LeftBar: React.FC = () => {
 
+    
     const { currentUser } = useContext(AuthContext)
     
 

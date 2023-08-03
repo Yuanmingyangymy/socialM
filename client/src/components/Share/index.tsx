@@ -42,10 +42,14 @@ const Share: React.FC = () => {
     const { currentUser } = useContext(AuthContext)
     // console.log(currentUser);
     
+    // 添加图片
+    const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+          setFile(e.target.files[0] as File);
+          message.success('添加图片成功');
+        }
+      };
 
-
-
-    // const { setPosts } = usePostsContext()
     const [refreshPosts, setRefreshPosts] = useState(false)
 
     const handleShare = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -60,6 +64,7 @@ const Share: React.FC = () => {
                 const formData = new FormData();
                 formData.append('file', file);
                 const response = await makeRequest.post("/upload", formData);
+                
                 if (response.status === 200) {
                     message.success('添加图片成功')
                     postData.img = response.data
@@ -140,11 +145,7 @@ const Share: React.FC = () => {
                                 type="file"
                                 id="file"
                                 style={{ display: "none" }}
-                                onChange={e => {
-                                    if (e.target.files && e.target.files.length > 0) {
-                                        setFile(e.target.files[0] as File);
-                                    }
-                                }} />
+                                onChange={handleImageSelect} />
                             <label htmlFor="file">
                                 <div className="item">
                                     <img src="https://github.com/safak/youtube2022/blob/react-social-ui/src/assets/img.png?raw=true" alt="" />

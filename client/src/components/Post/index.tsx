@@ -11,6 +11,7 @@ import moment from 'moment';
 // import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from '../../axios';
 import { AuthContext } from '../../context/authContext';
+import { PostSetContext } from '../../context/PostsContext';
 import { Button, Popconfirm } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import { message } from 'antd';
@@ -46,7 +47,8 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
     // const [share, setShare] = useState(false)
 
     const { currentUser } = useContext(AuthContext)
-
+    // 外部context提供postset，用于刷新Posts
+    const {postSet, setPostSet} = useContext(PostSetContext)
     // const [data, setData] useState()
 
     // useEffect(() => {
@@ -102,7 +104,7 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
                 message.error('用户登录已过期，请重新登录');
             } else if (res.status === 200) {
                 message.success('删除成功');
-                
+                setPostSet(!postSet)
                 if(setRefresh) {                    
                     setRefresh(!refresh)                   
                 }

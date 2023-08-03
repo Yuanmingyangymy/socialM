@@ -23,13 +23,17 @@ const Profile: React.FC = () => {
     const [size] = useState<SizeType>('large'); // default is 'middle'
     // 获取当前用户ID与当前个人信息页面用户ID比较，看是更新个人信息还是关注/取关
     const { currentUser } = useContext(AuthContext)
-
     // 是否显示更新信息框
     const [openUpdate, setOpenUpdate] = useState<boolean>(false)
 
     // 获取地址栏中userId
     const userId = parseInt(useLocation().pathname.split("/")[2])
-    
+    const userPage = useLocation().pathname.split("/")[1]
+    useEffect(() => {
+        if(userPage === 'profile') {
+            window.scrollTo(0, 0)
+        }
+    }, [])
     
     interface User {
         id: number,

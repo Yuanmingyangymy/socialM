@@ -42,6 +42,20 @@ const Update: React.FC<UpdateProps> = ({ setOpenUpdate, user }) => {
   const [cover, setCover] = useState<File | null>({} as File)
   const [profile, setProfile] = useState<File | null>({} as File)
 
+  // 添加图片
+  const handleImageSelectProfile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setProfile(e.target.files[0] as File);
+      message.success('添加图片成功');
+    }
+  }
+  const handleImageSelectCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setCover(e.target.files[0] as File);
+      message.success('添加图片成功');
+    }
+  }
+
   const upload = async (file: any) => {
     try {
       const formData = new FormData()
@@ -85,11 +99,12 @@ const Update: React.FC<UpdateProps> = ({ setOpenUpdate, user }) => {
       updatedUser.coverPic = coverUrl;
       updatedUser.profilePic = profileUrl;
       await makeRequest.put("/users", updatedUser).then(res => {
-        console.log(res.data[0]);
         
         if(res.status === 200) {
           message.success('更新成功')
           setCurrentUser(res.data[0])
+          
+          
         }
       })
       setOpenUpdate(false)
@@ -102,7 +117,7 @@ const Update: React.FC<UpdateProps> = ({ setOpenUpdate, user }) => {
   const handleUpdate = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     updateUserDetails();
-  };
+  }
   return (
     <div className="update">
       <div className="wrapper">
@@ -116,7 +131,7 @@ const Update: React.FC<UpdateProps> = ({ setOpenUpdate, user }) => {
               type="file"
               id="cover"
               style={{ display: "none" }}
-              onChange={(e) => setCover(e.target.files && e.target.files[0])}
+              onChange={handleImageSelectCover}
             />
             <label htmlFor="profile">
               <span>Profile Picture</span>
@@ -125,7 +140,7 @@ const Update: React.FC<UpdateProps> = ({ setOpenUpdate, user }) => {
               type="file"
               id="profile"
               style={{ display: "none" }}
-              onChange={(e) => setProfile(e.target.files && e.target.files[0])}
+              onChange={handleImageSelectProfile}
             />
           </div>
           <label>Name</label>

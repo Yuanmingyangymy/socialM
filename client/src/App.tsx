@@ -38,7 +38,6 @@ const App: React.FC = () => {
   // 用户信息(判断是否登录)
   const { currentUser } = useContext(AuthContext)
 
-  
 
   const Layout: React.FC = () => {
     return (
@@ -48,7 +47,7 @@ const App: React.FC = () => {
           <div style={{ display: "flex" }}>
             <LeftBar />
             <div style={{ flex: 6 }}>
-              <Outlet />
+                <Outlet />
             </div>
             <RightBar />
           </div>

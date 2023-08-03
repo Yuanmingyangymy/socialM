@@ -215,6 +215,20 @@ authContext.tsx中，`withCredentials`设为true
 
 **nodejs中想使用esmodule语法，需要在package.json文件中"main"下方添加"type": "module"**
 
+**新用户发了帖子，都是默认头像，更新头像之后，原来发的帖子还是默认头像**：解决：使用了mysql中的trigger，使得users的头像更新时，posts中对应用户的头像也改变
+
+**首页获取帖子数据时，登录用户的帖子获取了两遍，其他的正常**？
+
+
+
+## 添加聊天功能（mysql, socket.io）
+
+### nodejs
+
+添加：`Conversation.js`, `Message.js`
+
+
+
 
 
 

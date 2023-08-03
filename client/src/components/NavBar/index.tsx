@@ -41,7 +41,8 @@ const NavBar: React.FC = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchData(e.target.value)
     }
-    const search = async (e: React.MouseEvent<HTMLSpanElement>) => {
+    const search = async (e: React.FormEvent<HTMLFormElement>) => {
+        console.log('search');
         e.preventDefault()
         try {
             const res = await makeRequest.get('/search/find/'+searchData)
@@ -73,9 +74,11 @@ const NavBar: React.FC = () => {
                 <AppstoreOutlined />
                 <FireOutlined />
                 <div className="search">
-                    <form>
+                    <form onSubmit={search}>
                         <input type="text" placeholder='search here' onChange={(e) => handleChange(e)} />
-                        <SearchOutlined className='searchIcon' onClick={search} />
+                        <button type='submit' style={{backgroundColor: "transparent", border: "none"}}>
+                            <SearchOutlined className='searchIcon'/>
+                        </button>
                     </form>
 
                 </div>
