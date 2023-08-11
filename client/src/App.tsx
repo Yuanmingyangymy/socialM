@@ -1,13 +1,4 @@
-import { useContext } from 'react'
-
-import Login from './pages/Login'
-import Register from './pages/Register'
-import NavBar from './components/NavBar';
-import LeftBar from './components/LeftBar';
-import RightBar from './components/RightBar';
-import Profile from './pages/Profile';
-import Home from './pages/Home';
-
+import { Suspense, lazy, useContext } from 'react'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -23,7 +14,22 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import Posts from './components/Posts';
+// import Posts from './components/Posts';
+// import Login from './pages/Login'
+// import Register from './pages/Register'
+// import Profile from './pages/Profile';
+// import Home from './pages/Home';
+import NavBar from './components/NavBar';
+import LeftBar from './components/LeftBar';
+import RightBar from './components/RightBar';
+
+const Home = lazy(() => import("./pages/Home"))
+const Profile = lazy(() => import("./pages/Profile"))
+const Register = lazy(() => import("./pages/Register"))
+const Login = lazy(() => import("./pages/Login"))
+const Posts = lazy(() => import("./components/Posts"))
+
+
 
 const queryClient = new QueryClient()
 // 判断路由的类型是否正确
@@ -47,7 +53,7 @@ const App: React.FC = () => {
           <div style={{ display: "flex" }}>
             <LeftBar />
             <div style={{ flex: 6 }}>
-                <Outlet />
+              <Outlet />
             </div>
             <RightBar />
           </div>
@@ -80,25 +86,45 @@ const App: React.FC = () => {
       children: [
         {
           path: "/",
-          element: <Home />,
+          element: (
+            <Suspense fallback={<div>loading...</div>}>
+              <Home />
+            </Suspense>
+          )
         },
         {
           path: "/profile/:id",
-          element: <Profile />
+          element: (
+            <Suspense fallback={<div>loading...</div>}>
+              <Profile />
+            </Suspense>
+          )
         },
         {
           path: "/all",
-          element: <Posts/>
+          element: (
+            <Suspense fallback={<div>loading...</div>}>
+              <Posts />
+            </Suspense>
+          )
         }
       ]
     },
     {
       path: "/login",
-      element: <Login />,
+      element: (
+        <Suspense fallback={<div>loading...</div>}>
+          <Login />
+        </Suspense>
+      )
     },
     {
       path: "/register",
-      element: <Register />,
+      element: (
+        <Suspense fallback={<div>loading...</div>}>
+          <Register />
+        </Suspense>
+      )
     },
   ]);
 
