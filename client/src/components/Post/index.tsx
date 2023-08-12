@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './index.scss'
 
 import { HeartOutlined, HeartFilled, MessageOutlined } from '@ant-design/icons';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import Comments from '../Comments';
 // import Share from '../Share';
 import moment from 'moment';
@@ -30,13 +30,13 @@ interface PostProps {
         userPic?: string
     }
     refresh?: boolean
-    setRefresh?: React.Dispatch<React.SetStateAction<boolean>> 
+    setRefresh?: React.Dispatch<React.SetStateAction<boolean>>
 
 }
 
 
 const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
-    
+
     // 评论部分是否展开
     const [commentOpen, setCommentOpen] = useState(false)
     // （删除）菜单
@@ -48,7 +48,7 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
 
     const { currentUser } = useContext(AuthContext)
     // 外部context提供postset，用于刷新Posts
-    const {postSet, setPostSet} = useContext(PostSetContext)
+    const { postSet, setPostSet } = useContext(PostSetContext)
     // const [data, setData] useState()
 
     // useEffect(() => {
@@ -60,13 +60,14 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
     const [data, setData] = useState<object[]>([])
     // 判断是否点赞，如果点了，更新，useEffect监听
     const [isLikedByCurrentUser, setIsLikedByCurrentUser] = useState(false);
-    useEffect(() => {
-        makeRequest.get("/likes?postId=" + post.id).then(res => {
-            setData(res.data);
-            // 使用some方法来判断是否有点赞记录包含当前登录用户的id
-            setIsLikedByCurrentUser(res.data.some((like: { userId: string }) => like.userId === currentUser.id));
-        });
-    }, [currentUser.id, post.id]);
+    // 通过后方懒加载获取
+    // useEffect(() => {
+    //     makeRequest.get("/likes?postId=" + post.id).then(res => {
+    //         setData(res.data);
+    //         // 使用some方法来判断是否有点赞记录包含当前登录用户的id
+    //         setIsLikedByCurrentUser(res.data.some((like: { userId: string }) => like.userId === currentUser.id));
+    //     });
+    // }, [currentUser.id, post.id]);
 
 
     const handleLike = async (e: React.MouseEvent<HTMLDivElement>) => {
@@ -105,20 +106,61 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
             } else if (res.status === 200) {
                 message.success('删除成功');
                 setPostSet(!postSet)
-                if(setRefresh) {                    
-                    setRefresh(!refresh)                   
+                if (setRefresh) {
+                    setRefresh(!refresh)
                 }
             }
         })
     }
 
-    return (
+    // 设置帖子“懒加载”
+    const [inView, setInView] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    let callback = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                setInView(true);
+            }
+        });
+    };
+
+    useEffect(() => {
+        let observer = new IntersectionObserver(callback);
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!inView) return;
+
+        const fetchData = async () => {
+            try {
+                const res = await makeRequest.get('/likes?postId=' + post.id);
+                setData(res.data);
+                setIsLikedByCurrentUser(
+                    res.data.some((like: { userId: string }) => like.userId === currentUser.id)
+                );
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, [currentUser.id, post.id, inView]);
+
+    return inView ? (
         <div className="post">
             <div className="container">
                 {/* 个人信息区域 */}
                 <div className="user">
                     <div className="userInfo">
-                        <img src={post.userPic ? "/upload/"+post.userPic : "/assets/user.jpg"} alt="" />
+                        <img src={post.userPic ? "/upload/" + post.userPic : "/assets/user.jpg"} alt="" />
                         <div className="details">
                             <Link to={`/profile/${post.userId}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 <span className='name' onClick={handleTop}>{post.username}</span>
@@ -175,6 +217,38 @@ const Post: React.FC<PostProps> = ({ post, refresh, setRefresh }) => {
                 </div>
                 {commentOpen && <Comments postId={post.id} />}
                 {/* {share && <Share />} */}
+            </div>
+
+        </div>
+    ) : (
+        <div className="post" ref={ref}>
+            <div className="container">
+                {/* 个人信息区域 */}
+                <div className="user">
+                    <div className="userInfo">
+                        <img src={"/assets/user.jpg"} alt="" />
+                        <div className="details">
+                            <span className='name' onClick={handleTop}>name</span>
+                            <div className="date">createAt Time</div>
+                        </div>
+                    </div>
+                </div>
+                {/* 帖子内容 */}
+                <div className="content">
+                    <p>desc</p>
+                    <img alt="" style={{ backgroundColor: "white" }} />
+                </div>
+                {/* 点赞，评论，转发分享 */}
+                <div className="info">
+                    <div className="item" onClick={handleLike}>
+                        <HeartOutlined />
+                        88 likes
+                    </div>
+                    <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
+                        <MessageOutlined />
+                        12 comments
+                    </div>
+                </div>
             </div>
 
         </div>
