@@ -4,41 +4,39 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer')
 
+// 用于存储定时器标识
+let registrationTimer = null;
 module.exports.register = (req, res) => {
+    const { authCode, email } = req.body
+    // 校验验证码
+    const q = `SELECT * FROM users WHERE email = ?`
+    db.query(q, email, (err, data) => {
+        if (err) return res.status(500).json(err)
+        if (data.length === 0) return res.status(409).json("该邮箱未注册！")
+        const codeRight = data[0].code
+        if (authCode == codeRight) {
 
-    // 检查用户是否已存在数据库中
-    const q = "SELECT * FROM users WHERE username = ?"
-
-    db.query(q, [req.body.username], (err, data) => {
-        if (err) {
-            return res.status(500).json(err)
-        }
-
-        if (data.length) return res.status(409).json("用户名已存在！请更换用户名")
-        // 加密密码
-        const salt = bcrypt.genSaltSync(10);
-        const hashedPassword = bcrypt.hashSync(req.body.password, salt)
-        // 创建新用户
-        const q = "INSERT INTO users (`username`, `password`, `email`) VALUE (?)"
-
-        const values = [
-            req.body.username,
-            hashedPassword,
-            req.body.email
-        ]
-        db.query(q, [values], (err, data) => {
-            if (err) {
-                return res.status(500).json(err)
+            // 取消之前的定时器
+            if (registrationTimer) {
+                clearTimeout(registrationTimer);
+                registrationTimer = null;
+                console.log("Registration timer canceled.");
             }
-            return res.status(200).json("用户注册成功！")
-        })
+            return res.status(200).json("用户注册成功");
+        } else {
+            return res.status(400).json("验证码不正确，请重新输入")
+        }
     })
+
 
 
 
 }
 
 module.exports.login = (req, res) => {
+    if (registrationTimer) {
+        return res.status(409).json("请注册后登录！")
+    }
     // 先从数据库找是否有该用户名
     const q = "SELECT * FROM users WHERE username = ?"
 
@@ -74,13 +72,21 @@ module.exports.logout = (req, res) => {
 }
 
 module.exports.getAuthCode = (req, res) => {
-    const { email } = req.body
-    const q = `SELECT * FROM users WHERE email = ?`
-    db.query(q, email, (err, data) => {
+    const username = req.body.username;
+    const email = req.body.email;
+
+    // 检查用户是否已存在数据库中
+    const q = "SELECT * FROM users WHERE username = ? OR email = ?";
+
+    db.query(q, [username, email], (err, data) => {
         if (err) {
-            return res.status(500).json(err)
+            return res.status(500).json(err);
         }
-        if (data.length) return res.status(409).json("邮箱已被注册！")
+
+        if (data.length) {
+            return res.status(409).json("用户名或邮箱已存在！请更换用户名或邮箱");
+        }
+        // 邮箱验证代码
         const transporter = nodemailer.createTransport({
             host: 'smtp.qq.com',
             secureConnection: true,
@@ -103,42 +109,57 @@ module.exports.getAuthCode = (req, res) => {
             return code;
         }
         const code = createCode()
+
+        // 加密密码
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
         try {
-            let info = transporter.sendMail({
+            transporter.sendMail({
                 from: 'ymy030720@qq.com', // 发送源邮箱
                 to: email, //目标邮箱号
                 subject: "验证邮件", // 邮箱主题
                 html:
                     `
-                    <h1>验证码： ${code}</h1>
+                    <div style="background-color: #fff; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
+
+                    <h1 style="color: #333;">验证码</h1>
+            
+                    <p style="font-size: 16px; color: #777;">您的验证码为：${code}</p>
+                    <p style="font-size: 32px; color: #333; font-weight: bold;">${code}</p>
+                    <p style="font-size: 16px; color: #333; font-weight: bold;">验证码将在30分钟后过期，请及时注册！</p>
+
+                </div>
                 `, // 发送的内容
             });
             // 验证邮件是否发送成功
             transporter.verify(async function (error, success) {
                 if (!error) {
-                    // 在数据库中创建一个emails表，点击获取验证码后，在其中存入相关验证码，设置有效期，然后点击注册时校验
-                    const eq = "INSERT INTO emails (`email`) VALUE (?)"
-                    db.query(eq, email, (err, data) => {
+                    // 创建新用户
+                    const insertQuery = "INSERT INTO users (`username`, `password`, `email`, `code`) VALUES (?, ?, ?, ?)";
+
+                    const values = [username, hashedPassword, email, code];
+
+                    db.query(insertQuery, values, (err, data) => {
                         if (err) {
-                            return res.status(500).json(err)
+                            return res.status(500).json(err);
                         }
-                        return res.status(200).json("邮箱注册成功！")
-                    })
 
-                    // 设置30分钟后自动删除验证码记录
-                    setTimeout(() => {
-                        const q = "DELETE FROM posts WHERE `id` = ? AND `userId` = ?"
+                        // 注册成功后，启动定时器
+                        registrationTimer = setTimeout(() => {
+                            // 定时器触发后，执行删除数据操作
+                            const deleteQuery = "DELETE FROM users WHERE username = ? OR email = ?";
+                            db.query(deleteQuery, [username, email], (err, data) => {
+                                if (err) {
+                                    console.error("Error deleting user data:", err);
+                                } else {
+                                    console.log("User data deleted after 30 minutes.");
+                                }
+                            });
+                        }, 30 * 60 * 1000); // 30分钟的毫秒数
 
-                        const eq = "DELETE FROM emails WHERE `email` = ?"
-                        db.query(eq, email, (err, data) => {
-                            if (err) return res.status(500).json(err)
-                            if (data.affectedRows > 0) return res.status(200).json("邮箱及验证码已删除")
-                            else return res.status(409).json('删除邮箱失败')
-                        })
-                        console.log(`Email record for ${email} has been deleted.`);
-                    }, 30 * 60 * 1000); // 30分钟的毫秒数
-
-                    return res.status(200).json('发送邮件成功');
+                        return res.status(200).json("验证码已发送，请及时查收邮件");
+                    });
                 }
             })
 
@@ -147,5 +168,6 @@ module.exports.getAuthCode = (req, res) => {
 
         }
 
-    })
+
+    });
 }

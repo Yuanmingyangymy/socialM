@@ -6,9 +6,10 @@ import { message } from 'antd';
 import { makeRequest } from '../../axios';
 const Register: React.FC = () => {
     interface userData {
-        username: string;
-        password: string;
-        email: string;
+        username: string
+        password: string
+        email: string
+        authCode?: number | string
     }
     // 表单信息
     const [inputs, setInputs] = useState<userData>({
@@ -46,16 +47,14 @@ const Register: React.FC = () => {
 
     const handleAuthCode = async (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault()
-        const { email } = inputs
         if (handleValidation()) {
 
             try {
-                const res = await makeRequest.post("/auth/getAuthCode", email)
+                const res = await makeRequest.post("/auth/getAuthCode", inputs)
+                console.log(res);
 
-                if (res.status === 409) {
-                    message.error('邮箱已注册')
-                } else if (res.status === 200) {
-                    message.success('发送验证码成功，请查收邮件')
+                if (res.status === 200) {
+                    message.success(res.data)
                 }
             } catch (err: any) {
                 if (err.response && err.response.status === 409) {
@@ -73,17 +72,22 @@ const Register: React.FC = () => {
 
     async function handleReg(e?: MouseEvent<HTMLButtonElement>) {
         e?.preventDefault()
+        const { authCode } = inputs
+        if (authCode?.toString().trim().length === 0) {
+            message.error('请输入验证码')
+            return
+        }
+
         try {
             const res = await makeRequest.post("/auth/register", inputs)
-
-            if (res.status === 409) {
-                message.error('用户名已存在！请更换用户名')
-            } else if (res.status === 200) {
+            if (res.status === 200) {
                 message.success('注册成功！')
                 navigate("/login")
             }
         } catch (err: any) {
             if (err.response && err.response.status === 409) {
+                message.error(err.response.data)
+            } else if (err.response && err.response.status === 400) {
                 message.error(err.response.data)
             } else {
                 throw err
