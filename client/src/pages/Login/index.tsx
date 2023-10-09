@@ -31,10 +31,10 @@ const Login: React.FC = () => {
     e.preventDefault()
     try {
       const res = await login(inputs)
-      if(res === '200') {
+      if (res === '200') {
         navigate("/")
       }
-      
+
     } catch (err: any) {
       setErr(err.response.data)
     }

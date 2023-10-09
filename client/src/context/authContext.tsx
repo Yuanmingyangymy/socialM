@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createContext, useState, useEffect } from 'react';
 import { message } from 'antd';
-
+import { makeRequest } from '../axios';
 export const AuthContext = createContext<any>(null)
 
 
@@ -11,10 +11,10 @@ export const AuthModeContextProvider = ({ children }: { children: React.ReactNod
 
     const login = async (inputs: any) => {
         try {
-            const res = await axios.post("http://localhost:8800/api/auth/login", inputs, {
+            const res = await makeRequest.post("/auth/login", inputs, {
                 withCredentials: true,
             });
-            
+
             if (res.status === 404) {
                 message.error('未找到该用户，请注册！');
             } else if (res.status === 400) {
@@ -25,7 +25,7 @@ export const AuthModeContextProvider = ({ children }: { children: React.ReactNod
 
                 return '200'
             }
-        
+
         } catch (err: any) {
             if (err.response && err.response.status === 404) {
                 message.error('未找到该用户，请注册！');

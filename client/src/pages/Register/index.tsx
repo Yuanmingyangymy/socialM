@@ -1,9 +1,9 @@
-import React, { useState, ChangeEvent, MouseEvent, useEffect  } from 'react';
+import React, { useState, ChangeEvent, MouseEvent, useEffect } from 'react';
 import axios from 'axios';
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import './index.scss';
 import { message } from 'antd';
-
+import { makeRequest } from '../../axios';
 const Register: React.FC = () => {
     interface userData {
         username: string;
@@ -20,8 +20,52 @@ const Register: React.FC = () => {
     const [err, setErr] = useState(null)
 
 
-    function handleChange(e:ChangeEvent<HTMLInputElement>) {
-        setInputs((prev) => ({...prev, [e.target.name]: e.target.value}))
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+
+    }
+    const handleValidation = () => {
+        const { username, password, email } = inputs;
+
+        // 正则表达式匹配 QQ 邮箱格式
+        const qqEmailPattern = /^[a-zA-Z0-9_]+@qq\.com$/;
+
+        if (username.trim().length < 1) {
+            message.error("用户名不能为空");
+            return false;
+        } else if (password.trim().length < 6) {
+            message.error("密码至少六位");
+            return false;
+        } else if (!qqEmailPattern.test(email.trim())) {
+            message.error("请输入有效的 QQ 邮箱");
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleAuthCode = async (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault()
+        const { email } = inputs
+        if (handleValidation()) {
+
+            try {
+                const res = await makeRequest.post("/auth/getAuthCode", email)
+
+                if (res.status === 409) {
+                    message.error('邮箱已注册')
+                } else if (res.status === 200) {
+                    message.success('发送验证码成功，请查收邮件')
+                }
+            } catch (err: any) {
+                if (err.response && err.response.status === 409) {
+                    message.error(err.response.data)
+                } else {
+                    throw err
+                }
+            }
+        }
+
 
     }
 
@@ -30,8 +74,8 @@ const Register: React.FC = () => {
     async function handleReg(e?: MouseEvent<HTMLButtonElement>) {
         e?.preventDefault()
         try {
-            const res = await axios.post("http://localhost:8800/api/auth/register", inputs)
-    
+            const res = await makeRequest.post("/auth/register", inputs)
+
             if (res.status === 409) {
                 message.error('用户名已存在！请更换用户名')
             } else if (res.status === 200) {
@@ -46,7 +90,7 @@ const Register: React.FC = () => {
             }
         }
     }
-    
+
 
 
     return (
@@ -65,17 +109,16 @@ const Register: React.FC = () => {
                 <div className="right">
                     <h1>Register</h1>
                     <form>
-                        <input type="text" placeholder="请输入用户名" name="username" onChange={handleChange}/>
-                        <input type="password" placeholder="请输入密码" name="password" onChange={handleChange}/>
-                        <input type="email" placeholder="请输入邮箱" name="email" onChange={handleChange}/>
-                        {/* 错误信息提示 */}
-                        {/* <span style={{color: "red"}}>{err && err}</span> */}
-                        {err && err}
+                        <input type="text" placeholder="请输入用户名" name="username" onChange={handleChange} />
+                        <input type="password" placeholder="请输入密码" name="password" onChange={handleChange} />
+                        <input type="email" placeholder="请输入QQ邮箱" name="email" onChange={handleChange} />
+                        <input type="text" placeholder='请输入验证码' name='authCode' onChange={handleChange} />
+                        <button onClick={handleAuthCode}>获取验证码</button>
                         <button onClick={handleReg}>Register</button>
                     </form>
                 </div>
             </div>
-            </div>
+        </div>
     )
 }
 
