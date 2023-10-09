@@ -1,6 +1,6 @@
-import express from 'express';
+const express = require('express');
 
-import { getComments, addComment } from '../controllers/comment.js';
+const { getComments, addComment } = require('../controllers/comment.js');
 
 const router = express.Router()
 
@@ -8,4 +8,4 @@ const router = express.Router()
 router.get("/", getComments)
 router.post("/", addComment)
 
-export default router
+module.exports = router

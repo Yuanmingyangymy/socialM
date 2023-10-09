@@ -1,7 +1,7 @@
-import { db } from '../connect.js';
-import jwt from 'jsonwebtoken';
+const db = require('../connect.js');
+const jwt = require('jsonwebtoken');
 
-export const getUser = (req, res) => {
+module.exports.getUser = (req, res) => {
     const userId = req.params.userId
     const q = `SELECT * FROM users WHERE id = ?`
 
@@ -14,7 +14,7 @@ export const getUser = (req, res) => {
 
 }
 
-export const updateUser = (req, res) => {
+module.exports.updateUser = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("未登录");
 

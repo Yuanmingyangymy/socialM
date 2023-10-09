@@ -1,6 +1,6 @@
-import express from 'express';
+const express = require('express');
 
-import { findUser } from '../controllers/search.js';
+const { findUser } = require('../controllers/search.js');
 
 const router = express.Router()
 
@@ -8,4 +8,4 @@ const router = express.Router()
 router.get("/find/:username", findUser)
 
 
-export default router
+module.exports = router

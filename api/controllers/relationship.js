@@ -1,7 +1,7 @@
-import { db } from '../connect.js';
-import jwt from 'jsonwebtoken';
+const db = require('../connect.js');
+const jwt = require('jsonwebtoken');
 
-export const getRelationships = (req, res) => {
+module.exports.getRelationships = (req, res) => {
     const q = `SELECT followerUserId FROM relationships WHERE followedUserId = ?`
 
 
@@ -11,7 +11,7 @@ export const getRelationships = (req, res) => {
     })
 }
 
-export const addRelationship = (req, res) => {
+module.exports.addRelationship = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
 
@@ -28,9 +28,9 @@ export const addRelationship = (req, res) => {
         ];
 
         db.query(checkDuplicateQ, checkDuplicateParams, (err, result) => {
-            if(err) return res.status(500).json(err)
-            if(result[0].count > 0) {
-                 return res.status(400).json("该关注关系已存在")
+            if (err) return res.status(500).json(err)
+            if (result[0].count > 0) {
+                return res.status(400).json("该关注关系已存在")
             }
             db.query(q, [values], (err, data) => {
                 if (err) return res.status(500).json(err);
@@ -38,21 +38,21 @@ export const addRelationship = (req, res) => {
             });
         })
 
-       
+
     });
 }
 
-export const deleteRelationship = (req, res) => {
+module.exports.deleteRelationship = (req, res) => {
     const token = req.cookies.accessToken;
     if (!token) return res.status(401).json("Not logged in!");
-  
+
     jwt.verify(token, "secretkey", (err, userInfo) => {
-      if (err) return res.status(403).json("Token is not valid!");
-  
-      const q = "DELETE FROM relationships WHERE `followerUserId` = ? AND `followedUserId` = ?";
-      db.query(q, [userInfo.id, req.body.userId], (err, data) => {
-        if (err) return res.status(500).json(err);
-        return res.status(200).json("Unfollow.");
-      });
+        if (err) return res.status(403).json("Token is not valid!");
+
+        const q = "DELETE FROM relationships WHERE `followerUserId` = ? AND `followedUserId` = ?";
+        db.query(q, [userInfo.id, req.body.userId], (err, data) => {
+            if (err) return res.status(500).json(err);
+            return res.status(200).json("Unfollow.");
+        });
     });
 }

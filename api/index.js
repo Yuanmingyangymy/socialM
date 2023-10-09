@@ -1,16 +1,16 @@
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import multer from 'multer';
+const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const multer = require('multer');
 
 
-import userRoutes from './routes/users.js'
-import postRoutes from './routes/posts.js'
-import likeRoutes from './routes/likes.js';
-import commentRoutes from './routes/comments.js'
-import authRoutes from './routes/auth.js'
-import relationshipRoutes from './routes/relationship.js';
-import searchRoutes from './routes/search.js';
+const userRoutes = require('./routes/users.js')
+const postRoutes = require('./routes/posts.js')
+const likeRoutes = require('./routes/likes.js');
+const commentRoutes = require('./routes/comments.js')
+const authRoutes = require('./routes/auth.js')
+const relationshipRoutes = require('./routes/relationship.js');
+const searchRoutes = require('./routes/search.js');
 
 const app = express()
 

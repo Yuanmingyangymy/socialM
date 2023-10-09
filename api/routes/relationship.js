@@ -1,6 +1,6 @@
-import express from 'express';
+const express = require('express');
 
-import { getRelationships, addRelationship, deleteRelationship} from '../controllers/relationship.js';
+const { getRelationships, addRelationship, deleteRelationship } = require('../controllers/relationship.js');
 
 const router = express.Router()
 
@@ -9,4 +9,4 @@ router.get("/", getRelationships)
 router.post("/", addRelationship)
 router.post("/delete/", deleteRelationship)
 
-export default router
+module.exports = router

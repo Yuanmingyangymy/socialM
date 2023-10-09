@@ -1,9 +1,9 @@
-import { db } from '../connect.js';
-import jwt from 'jsonwebtoken';
-import moment from 'moment';
+const db = require('../connect.js');
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
 
-export const getAll = (req, res) => {
+module.exports.getAll = (req, res) => {
     // 进行身份认证
     const token = req.cookies.accessToken
     if (!token) return res.status(401).json("未登录！")
@@ -21,7 +21,7 @@ export const getAll = (req, res) => {
 
 }
 
-export const getPosts = (req, res) => {
+module.exports.getPosts = (req, res) => {
 
     const userId = req.query.userId
 
@@ -51,7 +51,7 @@ export const getPosts = (req, res) => {
 
 }
 
-export const addPost = (req, res) => {
+module.exports.addPost = (req, res) => {
     const token = req.cookies.accessToken
     if (!token) return res.status(401).json("未登录！")
     jwt.verify(token, "secretkey", (err, userInfo) => {
@@ -73,7 +73,7 @@ export const addPost = (req, res) => {
     })
 }
 
-export const deletePost = (req, res) => {
+module.exports.deletePost = (req, res) => {
     const token = req.cookies.accessToken
     if (!token) return res.status(401).json("未登录！")
     jwt.verify(token, "secretkey", (err, userInfo) => {
@@ -82,7 +82,7 @@ export const deletePost = (req, res) => {
 
         db.query(q, [req.params.id, userInfo.id], (err, data) => {
             if (err) return res.status(500).json(err)
-            if (data.affectedRows > 0) return res.status(200).json("帖子也删除")
+            if (data.affectedRows > 0) return res.status(200).json("帖子已删除")
             return res.status(403).json("只能删除用户自己的帖子！")
         })
     })
