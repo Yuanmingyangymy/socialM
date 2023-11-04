@@ -8,7 +8,6 @@ import Comments from '../Comments';
 // import Share from '../Share';
 import moment from 'moment';
 
-// import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { makeRequest } from '../../axios';
 import { AuthContext } from '../../context/authContext';
 import { PostSetContext } from '../../context/PostsContext';

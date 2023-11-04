@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const bodyParser = require('body-parser')
 
 
 const userRoutes = require('./routes/users.js')
@@ -11,6 +12,8 @@ const commentRoutes = require('./routes/comments.js')
 const authRoutes = require('./routes/auth.js')
 const relationshipRoutes = require('./routes/relationship.js');
 const searchRoutes = require('./routes/search.js');
+const fileRoutes = require('./routes/file.js')
+
 
 const app = express()
 
@@ -23,6 +26,9 @@ app.use((req, res, next) => {
 })
 // express.json() 中间件是将 HTTP 请求体中的 JSON 数据转换成 JavaScript 对象。具体来说，它使用 JSON.parse() 方法将请求体中的 JSON 字符串解析成 JavaScript 对象，并将其赋值给 req.body 对象的属性。
 app.use(express.json())
+
+app.use(bodyParser.json())
+
 // 配置跨域
 app.use(
     cors({
@@ -59,6 +65,7 @@ app.use("/api/comments", commentRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/relationships", relationshipRoutes)
 app.use("/api/search", searchRoutes)
+app.use("/api/file", fileRoutes)
 
 app.listen(8800, () => {
     console.log("api working well");
