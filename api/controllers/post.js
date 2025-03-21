@@ -56,12 +56,11 @@ module.exports.addPost = (req, res) => {
     if (!token) return res.status(401).json("未登录！")
     jwt.verify(token, "secretkey", (err, userInfo) => {
         if (err) return res.status(403).json("用户登录已过期，请重新登录")
-        const q = "INSERT INTO posts (`desc`, `img`, `userPic`, `createdAt`, `userId`) VALUES (?)"
+        const q = "INSERT INTO posts (`desc`, `img`, `createdAt`, `userId`) VALUES (?)"
         // console.log(req.body);
         const values = [
             req.body.desc,
             req.body.img,
-            req.body.userPic,
             moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
             userInfo.id,
         ]

@@ -80,12 +80,14 @@ module.exports.getAuthCode = (req, res) => {
 
     db.query(q, [username, email], (err, data) => {
         if (err) {
-            return res.status(500).json(err);
+            console.error("Error checking user existence:", err);
+            return res.status(500).json({ error: "数据库查询出错，请稍后重试" });
         }
 
         if (data.length) {
             return res.status(409).json("用户名或邮箱已存在！请更换用户名或邮箱");
         }
+
         // 邮箱验证代码
         const transporter = nodemailer.createTransport({
             host: 'smtp.qq.com',
@@ -96,7 +98,7 @@ module.exports.getAuthCode = (req, res) => {
                 user: 'ymy030720@qq.com',
                 pass: 'utsjzazagavadhgj'
             }
-        })
+        });
 
         function createCode() {
             let codeArr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -108,66 +110,63 @@ module.exports.getAuthCode = (req, res) => {
             }
             return code;
         }
-        const code = createCode()
+        const code = createCode();
 
         // 加密密码
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-        try {
-            transporter.sendMail({
-                from: 'ymy030720@qq.com', // 发送源邮箱
-                to: email, //目标邮箱号
-                subject: "验证邮件", // 邮箱主题
-                html:
-                    `
-                    <div style="background-color: #fff; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
-
+        transporter.sendMail({
+            from: 'ymy030720@qq.com', // 发送源邮箱
+            to: email, // 目标邮箱号
+            subject: "验证邮件", // 邮箱主题
+            html: `
+                <div style="background-color: #fff; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);">
                     <h1 style="color: #333;">验证码</h1>
-            
                     <p style="font-size: 16px; color: #777;">您的验证码为：${code}</p>
                     <p style="font-size: 32px; color: #333; font-weight: bold;">${code}</p>
                     <p style="font-size: 16px; color: #333; font-weight: bold;">验证码将在30分钟后过期，请及时注册！</p>
-
                 </div>
-                `, // 发送的内容
-            });
+            ` // 发送的内容
+        }, (sendErr, info) => {
+            if (sendErr) {
+                console.error("Error sending email:", sendErr);
+                return res.status(500).json({ error: "邮件发送失败，请检查邮箱配置或稍后重试" });
+            }
+
             // 验证邮件是否发送成功
-            transporter.verify(async function (error, success) {
-                if (!error) {
-                    // 创建新用户
-                    const insertQuery = "INSERT INTO users (`username`, `password`, `email`, `code`) VALUES (?, ?, ?, ?)";
-
-                    const values = [username, hashedPassword, email, code];
-
-                    db.query(insertQuery, values, (err, data) => {
-                        if (err) {
-                            return res.status(500).json(err);
-                        }
-
-                        // 注册成功后，启动定时器
-                        registrationTimer = setTimeout(() => {
-                            // 定时器触发后，执行删除数据操作
-                            const deleteQuery = "DELETE FROM users WHERE username = ? OR email = ?";
-                            db.query(deleteQuery, [username, email], (err, data) => {
-                                if (err) {
-                                    console.error("Error deleting user data:", err);
-                                } else {
-                                    console.log("User data deleted after 30 minutes.");
-                                }
-                            });
-                        }, 30 * 60 * 1000); // 30分钟的毫秒数
-
-                        return res.status(200).json("验证码已发送，请及时查收邮件");
-                    });
+            transporter.verify((verifyErr, success) => {
+                if (verifyErr) {
+                    console.error("Error verifying email transporter:", verifyErr);
+                    return res.status(500).json({ error: "邮件验证失败，请检查邮箱配置或稍后重试" });
                 }
-            })
 
-        } catch (error) {
-            return res.status(409).json(error);
+                // 创建新用户
+                const insertQuery = "INSERT INTO users (`username`, `password`, `email`, `code`) VALUES (?, ?, ?, ?)";
+                const values = [username, hashedPassword, email, code];
 
-        }
+                db.query(insertQuery, values, (insertErr, data) => {
+                    if (insertErr) {
+                        console.error("Error inserting user data:", insertErr);
+                        return res.status(500).json({ error: "用户数据插入失败，请稍后重试" });
+                    }
 
+                    // 注册成功后，启动定时器
+                    registrationTimer = setTimeout(() => {
+                        // 定时器触发后，执行删除数据操作
+                        const deleteQuery = "DELETE FROM users WHERE username = ? OR email = ?";
+                        db.query(deleteQuery, [username, email], (deleteErr, data) => {
+                            if (deleteErr) {
+                                console.error("Error deleting user data:", deleteErr);
+                            } else {
+                                console.log("User data deleted after 30 minutes.");
+                            }
+                        });
+                    }, 30 * 60 * 1000); // 30分钟的毫秒数
 
+                    return res.status(200).json("验证码已发送，请及时查收邮件");
+                });
+            });
+        });
     });
-}
+};
